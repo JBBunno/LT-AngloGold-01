@@ -1,1050 +1,1041 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shutdown Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="LiveTrack" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="https://static.wixstatic.com/media/ebac84_ec73f8d58e184bc0a84f6118c85c88c9~mv2.png" />
+<meta name="theme-color" content="#0b1c33" />
+<title>PalmCrest LiveTrack</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap');
-:root {
-  --coal:    #0d1117;
-  --slate:   #161b22;
-  --panel:   #1c2330;
-  --panel2:  #1a2840;
-  --border:  #2a3444;
-  --muted:   #4d6080;
-  --text:    #b8c9e0;
-  --bright:  #e2eaf5;
-  --amber:   #f5a623;
-  --green:   #2dcc8a;
-  --red:     #e05555;
-  --blue:    #4b8ef5;
-  --teal:    #0d7a8a;
-  --font-d:  'DM Mono','Courier New',monospace;
-  --font-u:  'Inter',system-ui,sans-serif;
-  --r: 6px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--coal);color:var(--text);font-family:var(--font-u);font-size:14px;min-height:100vh}
-/* ── HEADER ── */
-header{
-  background:var(--slate);border-bottom:1px solid var(--border);
-  padding:10px 20px;display:flex;align-items:center;gap:14px;
-  position:sticky;top:0;z-index:200;flex-wrap:wrap;
-}
-.logo{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);white-space:nowrap}
-.hdr-name{font-size:14px;font-weight:500;color:var(--bright);flex:1;min-width:100px}
-.hdr-meta{font-family:var(--font-d);font-size:11px;color:var(--muted);white-space:nowrap}
-.hdr-ago{font-family:var(--font-d);font-size:12px;font-weight:600;white-space:nowrap}
-.btn{background:transparent;border:1px solid var(--border);color:var(--text);
-  padding:5px 14px;border-radius:var(--r);cursor:pointer;font-size:12px;
-  font-family:var(--font-u);transition:border-color .15s,color .15s;white-space:nowrap}
-.btn:hover{border-color:var(--amber);color:var(--amber)}
-/* ── TABS ── */
-nav{background:var(--slate);border-bottom:1px solid var(--border);display:flex;padding:0 20px}
-nav button{
-  background:none;border:none;border-bottom:2px solid transparent;
-  color:var(--muted);cursor:pointer;font-family:var(--font-u);font-size:13px;
-  padding:9px 16px;white-space:nowrap;transition:color .15s,border-color .15s;
-}
-nav button.active,nav button:hover{color:var(--bright)}
-nav button.active{border-bottom-color:var(--amber)}
-/* ── LAYOUT ── */
-main{padding:16px 20px;max-width:1600px;margin:0 auto}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-.mb12{margin-bottom:12px}
-.mb16{margin-bottom:16px}
-/* ── SHUTDOWN NAME / KPI BAND ── */
-.name-kpi-band{
-  background:linear-gradient(135deg,#0d4a5a 0%,#0a3545 50%,#0d1a2e 100%);
-  border:1px solid #1a5570;border-radius:var(--r);
-  padding:14px 20px;margin-bottom:12px;
-  display:flex;align-items:center;gap:0;flex-wrap:wrap;
-}
-.shutdown-name-block{
-  flex:1;min-width:200px;
-  font-size:28px;font-weight:700;color:#fff;
-  letter-spacing:-.01em;line-height:1.1;
-  padding-right:24px;border-right:1px solid rgba(255,255,255,.15);
-  margin-right:0;
-}
-.kpi-band{display:flex;flex:2;flex-wrap:wrap}
-.kpi-cell{
-  flex:1;min-width:130px;padding:4px 20px;
-  border-right:1px solid rgba(255,255,255,.1);
-}
-.kpi-cell:last-child{border-right:none}
-.kpi-cell-label{
-  font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-  color:rgba(255,255,255,.5);margin-bottom:4px;
-}
-.kpi-cell-value{
-  font-family:var(--font-d);font-size:22px;font-weight:500;color:#fff;line-height:1;
-}
-.kpi-cell-value.big{font-size:30px}
-.kv-green{color:var(--green)!important}
-.kv-amber{color:var(--amber)!important}
-.kv-red{color:var(--red)!important}
-.kv-white{color:#fff!important}
-/* ── MAINTENANCE WINDOW BAND ── */
-.maint-band{
-  background:var(--panel2);border:1px solid #1e3a5a;border-radius:var(--r);
-  padding:10px 18px;margin-bottom:12px;
-  display:flex;align-items:center;flex-wrap:wrap;gap:0;
-}
-.maint-title{
-  font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--amber);padding-right:18px;border-right:1px solid var(--border);
-  margin-right:18px;white-space:nowrap;align-self:stretch;display:flex;align-items:center;
-}
-.maint-fields{display:flex;flex-wrap:wrap;gap:20px;flex:1}
-.maint-field{}
-.maint-field-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
-.maint-field-value{font-family:var(--font-d);font-size:13px;color:var(--bright);font-weight:500}
-.maint-field-value.green{color:var(--green)}
-.maint-field-value.amber{color:var(--amber)}
-.maint-field-value.red{color:var(--red)}
-/* ── PANEL ── */
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:12px}
-.panel-title{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
-/* ── AREA TABLE ── */
-.tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{
-  padding:7px 10px;color:var(--muted);font-size:9px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--border);
-  text-align:right;white-space:nowrap;
-}
-th:first-child{text-align:left}
-td{padding:7px 10px;border-bottom:1px solid rgba(42,52,68,.4);text-align:right;white-space:nowrap;color:var(--text)}
-td:first-child{text-align:left;color:var(--bright);font-weight:500}
-tr:hover td{background:rgba(75,142,245,.04)}
-.tag{display:inline-block;border-radius:3px;font-size:10px;padding:2px 7px;font-family:var(--font-d);font-weight:500}
-.tag-green{color:var(--green);background:rgba(45,204,138,.12)}
-.tag-amber{color:var(--amber);background:rgba(245,166,35,.12)}
-.tag-red{color:var(--red);background:rgba(224,85,85,.12)}
-.tag-blue{color:var(--blue);background:rgba(75,142,245,.12)}
-.fv-pos{color:var(--red);font-family:var(--font-d)}
-.fv-neg{color:var(--green);font-family:var(--font-d)}
-.fv-zero{color:var(--muted);font-family:var(--font-d)}
-/* ── GANTT ── */
-.gantt-wrap{display:flex;flex-direction:column;gap:5px}
-.gantt-row{display:flex;align-items:center;gap:8px}
-.gantt-label{width:150px;font-size:11px;color:var(--text);text-align:right;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
-.gantt-track{flex:1;height:16px;background:var(--border);border-radius:3px;overflow:hidden;display:flex}
-.gantt-offset{height:100%;background:transparent}
-.gantt-done{height:100%;background:var(--green)}
-.gantt-rem{height:100%;background:rgba(75,142,245,.35)}
-.gantt-pct{font-family:var(--font-d);font-size:10px;color:var(--muted);width:34px;text-align:right;flex-shrink:0}
-.gantt-legend{display:flex;gap:14px;margin-bottom:10px;font-size:11px;color:var(--muted)}
-.gantt-legend span{display:flex;align-items:center;gap:5px}
-.gantt-legend i{display:inline-block;width:12px;height:7px;border-radius:2px}
-/* ── S-CURVE ── */
-.scurve-controls{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
-.chart-legend{display:flex;gap:18px;margin-bottom:10px;flex-wrap:wrap}
-.chart-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
-.leg-line{width:24px;height:2px;border-radius:1px}
-/* ── FIELD UPDATES ── */
-.filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-input[type=text]{
-  background:var(--panel);border:1px solid var(--border);border-radius:var(--r);
-  color:var(--text);font-family:var(--font-u);font-size:13px;
-  padding:6px 12px;outline:none;width:220px;transition:border-color .15s;
-}
-input[type=text]:focus{border-color:var(--amber)}
-select{
-  background:var(--panel);border:1px solid var(--border);color:var(--text);
-  border-radius:var(--r);padding:6px 10px;font-size:12px;
-  font-family:var(--font-u);outline:none;cursor:pointer;
-}
-select:focus{border-color:var(--amber)}
-.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-family:var(--font-d)}
-.badge-done{color:var(--green);background:rgba(45,204,138,.12)}
-.badge-pend{color:var(--amber);background:rgba(245,166,35,.12)}
-td.notes-cell{white-space:normal;max-width:260px;color:var(--bright);text-align:left}
-/* ── OUTSTANDING SUMMARY COUNTS ── */
-.out-summary-band{display:flex;gap:20px;flex-wrap:wrap;margin-top:8px}
-.out-summary-cell{
-  display:flex;flex-direction:column;gap:2px;
-  padding:6px 16px;border-right:1px solid var(--border);
-}
-.out-summary-cell:last-child{border-right:none}
-.out-summary-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.out-summary-value{font-family:var(--font-d);font-size:18px;font-weight:500}
-/* ── LOADING / ERROR ── */
-.overlay{
-  position:fixed;inset:0;background:var(--coal);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:999;
-}
-.spinner{width:34px;height:34px;border:3px solid var(--border);
-  border-top-color:var(--amber);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.spin-text{font-size:13px;color:var(--muted)}
-.err{background:rgba(224,85,85,.1);border:1px solid var(--red);border-radius:var(--r);
-  color:var(--red);padding:10px 16px;margin-bottom:12px;font-size:13px;display:none}
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap');
+  :root {
+    --navy: #0b1c33;
+    --navy-mid: #122540;
+    --navy-light: #1a3358;
+    --navy-border: #1e3d60;
+    --blue-accent: #1a6eb5;
+    --blue-bright: #2d8fe8;
+    --orange: #e07820;
+    --green: #1a7a30;
+    --green-bright: #22a040;
+    --red: #b02020;
+    --red-bright: #d42a2a;
+    --text-primary: #e8f0fa;
+    --text-secondary: #7aa8d8;
+    --text-muted: #4a6a8a;
+    --complete: #1a4a22;
+    --inprogress: #3a3612;
+    --notstarted: #122035;
+    --font-display: 'Rajdhani', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { height: 100%; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body { background: var(--navy); color: var(--text-primary); font-family: var(--font-body); font-size: clamp(13px, 3.5vw, 16px); min-height: 100vh; min-height: -webkit-fill-available; display: flex; justify-content: center; overflow-x: hidden; }
+  #app { width: 100%; max-width: 100%; min-height: 100vh; min-height: -webkit-fill-available; display: flex; flex-direction: column; position: relative; background: var(--navy); overflow-x: hidden; }
+  #loading { position: fixed; inset: 0; background: var(--navy); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+  .load-logo { font-family: var(--font-display); font-size: 36px; font-weight: 700; color: var(--text-primary); letter-spacing: 2px; margin-bottom: 6px; }
+  .load-sub { font-size: 12px; color: var(--text-secondary); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 40px; }
+  .load-bar { width: 180px; height: 3px; background: var(--navy-border); border-radius: 2px; overflow: hidden; }
+  .load-progress { height: 100%; background: var(--blue-bright); width: 0%; transition: width 0.4s ease; border-radius: 2px; }
+  .load-status { margin-top: 14px; font-size: 11px; color: var(--text-muted); letter-spacing: 1px; }
+  .screen { display: none; flex-direction: column; flex: 1; }
+  .screen.active { display: flex; }
+  .topbar { background: var(--navy-mid); padding: 14px 16px; padding-top: max(14px, env(safe-area-inset-top)); display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--navy-border); min-height: 54px; position: sticky; top: 0; z-index: 10; }
+  .topbar-brand { font-family: var(--font-display); font-size: clamp(15px, 4vw, 18px); font-weight: 600; color: var(--text-primary); letter-spacing: 1px; flex: 1; text-align: center; }
+  .topbar-back { color: var(--blue-bright); font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; min-width: 60px; }
+  .topbar-icon { color: var(--text-secondary); font-size: 20px; cursor: pointer; width: 28px; text-align: center; }
+  .home-btn { background: var(--red-bright); color: #fff; font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.5px; padding: 6px 12px; border-radius: 8px; border: none; cursor: pointer; white-space: nowrap; min-height: 36px; min-width: 70px; }
+  .home-btn:active { background: var(--red); }
+  .bottomnav { background: var(--navy-mid); display: flex; border-top: 1px solid var(--navy-border); position: sticky; bottom: 0; z-index: 10; padding-bottom: env(safe-area-inset-bottom); }
+  .nav-btn { flex: 1; padding: 10px 2px 10px; color: var(--text-muted); font-size: clamp(8px, 2.2vw, 11px); font-family: var(--font-display); letter-spacing: 0.5px; text-align: center; cursor: pointer; border: none; background: none; border-top: 3px solid transparent; text-transform: uppercase; transition: color 0.15s, border-color 0.15s; min-height: 56px; }
+  .nav-btn .nav-icon { font-size: 20px; display: block; margin-bottom: 3px; }
+  .nav-btn.active { color: var(--text-primary); border-top: 3px solid var(--orange); }
+  .scroll-area { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .dash-header { background: var(--navy-light); padding: 16px; text-align: center; border-bottom: 1px solid var(--navy-border); }
+  .dash-title { font-family: var(--font-display); font-size: clamp(18px, 5vw, 24px); font-weight: 600; color: var(--text-primary); letter-spacing: 1px; }
+  .dash-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--navy-border); border-bottom: 1px solid var(--navy-border); }
+  .kpi-cell { background: var(--navy-mid); padding: 14px 16px; text-align: center; }
+  .kpi-label { color: var(--text-secondary); font-size: clamp(9px, 2.5vw, 12px); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-value { color: var(--text-primary); font-family: var(--font-display); font-size: clamp(22px, 7vw, 32px); font-weight: 600; }
+  .notice-box { margin: 14px; padding: 14px 16px; background: var(--navy-light); border-radius: 10px; border-left: 4px solid var(--orange); min-height: 120px; }
+  .notice-label { color: var(--orange); font-size: 10px; font-weight: 500; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
+  .notice-text { color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+  .dash-btn { display: block; width: calc(100% - 28px); margin: 0 14px 12px; padding: 16px; border-radius: 10px; border: none; font-family: var(--font-display); font-size: 17px; font-weight: 600; letter-spacing: 1px; cursor: pointer; text-align: center; transition: filter 0.15s, transform 0.1s; min-height: 52px; }
+  .dash-btn:active { transform: scale(0.98); }
+  .dash-btn.emergency { background: var(--red-bright); color: #fff; }
+  .dash-btn.worklist { background: var(--green-bright); color: #fff; font-size: 22px; padding: 20px; }
+  .dash-links { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 14px 20px; }
+  .dash-link-btn { background: var(--navy-light); color: var(--text-secondary); font-size: 15px; font-family: var(--font-display); padding: 18px 10px; border-radius: 10px; text-align: center; cursor: pointer; border: 1px solid var(--navy-border); letter-spacing: 0.5px; transition: background 0.15s; min-height: 56px; }
+  .dash-link-btn:active { background: var(--navy-border); color: var(--text-primary); }
+  .search-bar { padding: 10px 12px; background: var(--navy-mid); display: flex; gap: 10px; align-items: center; border-bottom: 1px solid var(--navy-border); position: sticky; top: 54px; z-index: 9; }
+  .search-input { flex: 1; background: var(--navy); border: 1px solid var(--navy-border); color: var(--text-primary); font-size: 15px; padding: 10px 12px; border-radius: 8px; font-family: var(--font-body); min-height: 44px; }
+  .search-input::placeholder { color: var(--text-muted); }
+  .filter-btn { background: var(--navy-light); border: 1px solid var(--navy-border); color: var(--text-secondary); padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; white-space: nowrap; font-family: var(--font-body); min-height: 44px; }
+  .filter-btn.active { background: var(--blue-accent); color: #fff; border-color: var(--blue-accent); }
+  .filter-panel { background: var(--navy-mid); border-bottom: 1px solid var(--navy-border); padding: 12px 14px; display: none; flex-direction: column; gap: 10px; }
+  .filter-panel.open { display: flex; }
+  .filter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .filter-select { background: var(--navy); border: 1px solid var(--navy-border); color: var(--text-primary); font-size: 14px; padding: 10px 8px; border-radius: 8px; font-family: var(--font-body); width: 100%; min-height: 44px; }
+  .filter-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .filter-clear { background: none; border: 1px solid var(--navy-border); color: var(--text-secondary); font-size: 13px; padding: 10px 14px; border-radius: 8px; cursor: pointer; align-self: flex-end; font-family: var(--font-body); min-height: 44px; }
+  .legend { display: flex; gap: 14px; padding: 8px 14px; background: var(--navy); border-bottom: 1px solid var(--navy-border); }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
+  .legend-dot { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+  .wo-row { background: var(--navy-light); padding: 14px 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 1px solid var(--navy-border); min-height: 52px; }
+  .wo-row:active { background: var(--navy-border); }
+  .wo-arrow { color: var(--text-secondary); font-size: 12px; width: 14px; flex-shrink: 0; transition: transform 0.2s; display: inline-block; }
+  .wo-arrow.open { transform: rotate(90deg); }
+  .wo-name { color: var(--text-primary); font-size: clamp(11px, 3vw, 14px); flex: 1; font-family: var(--font-display); letter-spacing: 0.3px; line-height: 1.3; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .wo-count { color: var(--text-muted); font-size: 11px; white-space: nowrap; }
+  .wo-update-bar { background: var(--navy-mid); padding: 10px 14px 10px 38px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--navy-border); gap: 10px; }
+  .wo-update-bar-label { color: var(--text-muted); font-size: 11px; font-family: var(--font-display); letter-spacing: 0.5px; }
+  .wo-update-all-btn { background: var(--blue-accent); color: #fff; font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.5px; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; white-space: nowrap; min-height: 36px; }
+  .wo-update-all-btn:active { background: var(--blue-bright); }
+  .task-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; padding: 12px 14px 12px 32px; gap: 6px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; align-items: center; min-height: 48px; }
+  .task-row:active { filter: brightness(1.2); }
+  .task-row.complete { background: var(--complete); }
+  .task-row.inprogress { background: var(--inprogress); }
+  .task-row.notstarted { background: var(--notstarted); }
+  .task-name { color: var(--text-primary); font-size: clamp(10px, 2.8vw, 13px); line-height: 1.4; min-width: 0; overflow: hidden; }
+  .task-cell { color: var(--text-secondary); font-size: clamp(9px, 2.5vw, 12px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .col-header { background: var(--navy); display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; padding: 6px 14px 6px 32px; gap: 6px; border-bottom: 1px solid var(--navy-border); }
+  .col-h { color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .no-results { padding: 50px 20px; text-align: center; color: var(--text-muted); font-size: 14px; }
+  .detail-content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px; width: 100%; }
+  .detail-wo-label { font-family: var(--font-display); font-size: 12px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .detail-task-name { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 18px; line-height: 1.2; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--navy-border); border-radius: 10px; overflow: hidden; margin-bottom: 16px; width: 100%; }
+  .detail-cell { background: var(--navy-mid); padding: 12px 14px; }
+  .detail-cell.full { grid-column: 1 / -1; }
+  .detail-cell-label { color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .detail-cell-value { color: var(--text-primary); font-size: clamp(11px, 3vw, 14px); line-height: 1.3; word-break: break-word; overflow-wrap: break-word; }
+  .progress-bar-wrap { margin-bottom: 16px; }
+  .progress-bar-label { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .progress-bar-bg { background: var(--navy-border); border-radius: 6px; height: 10px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; border-radius: 6px; background: var(--blue-bright); transition: width 0.3s; }
+  .edit-task-btn { width: 100%; background: var(--blue-accent); color: #fff; font-family: var(--font-display); font-size: 18px; font-weight: 600; letter-spacing: 1px; padding: 16px; border-radius: 10px; border: none; cursor: pointer; margin-bottom: 10px; min-height: 54px; }
+  .edit-task-btn:active { background: var(--blue-bright); }
+  .edit-body { flex: 1; padding: 18px; overflow-y: auto; }
+  .edit-section-label { font-family: var(--font-display); font-size: 12px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+  .edit-task-title { font-family: var(--font-display); font-size: 19px; font-weight: 600; color: var(--text-primary); margin-bottom: 22px; line-height: 1.3; }
+  .progress-control { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+  .prog-btn { width: 52px; height: 52px; background: var(--navy-light); border: 1px solid var(--navy-border); color: var(--text-primary); font-size: 28px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .prog-btn:active { background: var(--navy-border); }
+  .prog-display { flex: 1; background: var(--navy); border: 1px solid var(--navy-border); border-radius: 10px; padding: 12px; text-align: center; }
+  .prog-number { font-family: var(--font-display); font-size: 48px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+  .prog-unit { font-size: 16px; color: var(--text-secondary); }
+  .prog-slider { width: 100%; margin-bottom: 24px; accent-color: var(--blue-bright); height: 6px; }
+  .notes-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .notes-input { width: 100%; background: var(--navy); border: 1px solid var(--navy-border); color: var(--text-primary); font-size: 15px; padding: 14px; border-radius: 10px; font-family: var(--font-body); min-height: 110px; resize: none; margin-bottom: 22px; line-height: 1.5; }
+  .notes-input::placeholder { color: var(--text-muted); }
+  .save-btn { width: 100%; background: var(--green-bright); color: #fff; font-family: var(--font-display); font-size: 18px; font-weight: 600; letter-spacing: 1px; padding: 16px; border-radius: 10px; border: none; cursor: pointer; min-height: 54px; }
+  .save-btn:disabled { background: var(--navy-border); color: var(--text-muted); }
+  .save-btn.saving { background: var(--blue-accent); }
+  .doc-section-label { background: var(--navy); color: var(--text-muted); font-size: 10px; padding: 10px 16px; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--navy-border); }
+  .doc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--navy-border); }
+  .doc-btn { padding: 20px 14px; text-align: center; color: #fff; font-size: 14px; font-family: var(--font-display); font-weight: 500; letter-spacing: 0.5px; cursor: pointer; border: none; line-height: 1.4; min-height: 64px; display: flex; align-items: center; justify-content: center; }
+  .doc-btn:active { filter: brightness(1.2); }
+  .doc-btn.red { background: #8c1820; }
+  .doc-btn.red-full { background: var(--red-bright); grid-column: 1 / -1; font-size: 16px; padding: 22px; min-height: 68px; }
+  .doc-btn.green { background: #1a6a28; grid-column: 1 / -1; font-size: 16px; padding: 20px; min-height: 64px; }
+  .doc-btn.dark { background: var(--navy-mid); color: var(--text-secondary); }
+  .area-nav { background: var(--navy-mid); padding: 12px 16px; border-bottom: 1px solid var(--navy-border); }
+  .area-nav-label { color: var(--text-muted); font-size: 10px; text-align: center; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .area-nav-row { display: flex; align-items: center; gap: 12px; }
+  .area-arrow-btn { background: var(--navy-light); border: 1px solid var(--navy-border); color: var(--text-secondary); width: 44px; height: 44px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .area-arrow-btn:active { background: var(--navy-border); }
+  .area-name-display { flex: 1; text-align: center; font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.5px; }
+  .kpi-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--navy-border); margin: 14px; border-radius: 10px; overflow: hidden; }
+  .kpi-cell-sm { background: var(--navy-mid); padding: 14px 8px; text-align: center; }
+  .kpi-label-sm { color: var(--text-muted); font-size: 10px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .kpi-value-sm { color: var(--text-primary); font-family: var(--font-display); font-size: 20px; font-weight: 600; }
+  .kpi-wide { margin: 0 14px 12px; background: var(--navy-mid); border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--navy-border); min-height: 52px; }
+  .kpi-wide-label { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-wide-value { color: var(--text-primary); font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+  .chart-placeholder { margin: 0 14px 20px; background: var(--navy-mid); border-radius: 10px; border: 1px solid var(--navy-border); padding: 22px; text-align: center; cursor: pointer; min-height: 60px; }
+  .chart-placeholder-label { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.5px; }
+  /* EMERGENCY */
+  .emerg-body { flex: 1; padding: 24px 18px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+  .emerg-title { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--text-primary); text-align: center; letter-spacing: 1px; padding-bottom: 10px; border-bottom: 1px solid var(--navy-border); cursor: pointer; }
+  .emerg-call-btn { background: var(--red-bright); color: #fff; font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: 1px; padding: 24px; border-radius: 12px; border: none; cursor: pointer; text-align: center; animation: pulse 2s infinite; min-height: 72px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; width: 100%; }
+  .emerg-call-number { font-size: 14px; font-weight: 400; letter-spacing: 2px; opacity: 0.9; }
+  @keyframes pulse { 0%, 100% { background: var(--red-bright); } 50% { background: #ff3333; } }
+  .emerg-item-btn { background: #6a1010; color: #fff; font-family: var(--font-display); font-size: 17px; font-weight: 500; letter-spacing: 0.5px; padding: 20px; border-radius: 10px; border: none; cursor: pointer; text-align: center; min-height: 62px; text-decoration: none; display: flex; align-items: center; justify-content: center; width: 100%; }
+  .emerg-item-btn:active { background: #8a1818; }
+  .emerg-section-label { font-family: var(--font-display); font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; padding: 4px 0 2px; }
+  /* ADMIN */
+  .admin-pin-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 40px 20px; gap: 16px; }
+  .admin-pin-title { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--text-primary); letter-spacing: 1px; }
+  .admin-pin-sub { font-size: 13px; color: var(--text-muted); }
+  .admin-pin-dots { display: flex; gap: 14px; margin: 10px 0; }
+  .admin-pin-dot { width: 16px; height: 16px; border-radius: 50%; background: var(--navy-border); transition: background 0.15s; }
+  .admin-pin-dot.filled { background: var(--blue-bright); }
+  .admin-pin-pad { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; width: 100%; max-width: 280px; }
+  .admin-pin-key { background: var(--navy-light); color: var(--text-primary); font-family: var(--font-display); font-size: 24px; font-weight: 600; padding: 18px; border-radius: 10px; cursor: pointer; text-align: center; border: none; min-height: 62px; }
+  .admin-pin-key:active { background: var(--navy-border); }
+  .admin-pin-key.del { font-size: 18px; color: var(--text-muted); }
+  .admin-pin-error { color: var(--red-bright); font-size: 13px; min-height: 18px; }
+  .admin-section-title { font-family: var(--font-display); font-size: 13px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin: 18px 0 10px; }
+  .admin-doc-row { background: var(--navy-mid); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--navy-border); }
+  .admin-doc-row.hidden-row { opacity: 0.5; }
+  .admin-doc-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .admin-doc-key { font-family: var(--font-display); font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; }
+  .admin-doc-style { font-size: 10px; padding: 2px 8px; border-radius: 4px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.5px; }
+  .admin-doc-style.red, .admin-doc-style.red-full { background: var(--red-bright); color: #fff; }
+  .admin-doc-style.green { background: #1a6a28; color: #fff; }
+  .admin-doc-style.dark { background: var(--navy-border); color: var(--text-secondary); }
+  .admin-toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .admin-toggle input { opacity: 0; width: 0; height: 0; }
+  .admin-toggle-slider { position: absolute; inset: 0; background: var(--navy-border); border-radius: 24px; cursor: pointer; transition: background 0.2s; }
+  .admin-toggle-slider:before { content: ''; position: absolute; height: 18px; width: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
+  .admin-toggle input:checked + .admin-toggle-slider { background: var(--green-bright); }
+  .admin-toggle input:checked + .admin-toggle-slider:before { transform: translateX(20px); }
+  .admin-input { width: 100%; background: var(--navy); border: 1px solid var(--navy-border); color: var(--text-primary); font-size: 14px; padding: 10px 12px; border-radius: 8px; font-family: var(--font-body); min-height: 40px; }
+  .admin-input-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .admin-save-btn { width: 100%; background: var(--green-bright); color: #fff; font-family: var(--font-display); font-size: 18px; font-weight: 600; letter-spacing: 1px; padding: 16px; border-radius: 10px; border: none; cursor: pointer; min-height: 54px; margin-top: 10px; }
+  .admin-save-btn:active { filter: brightness(1.1); }
+  .admin-save-btn:disabled { background: var(--navy-border); color: var(--text-muted); }
+  #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--green); color: #fff; font-size: 14px; font-family: var(--font-display); letter-spacing: 0.5px; padding: 12px 24px; border-radius: 24px; opacity: 0; transition: opacity 0.3s, transform 0.3s; white-space: nowrap; z-index: 999; pointer-events: none; }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast.error { background: var(--red); }
+  @media (min-width: 700px) {
+    body { background: #060e1a; }
+    #app { max-width: 600px; box-shadow: 0 0 60px rgba(0,0,0,0.6); margin: 0 auto; }
+    .topbar { min-height: 58px; }
+    .nav-btn { font-size: 11px; }
+    .wo-name { font-size: 14px; }
+    .task-name { font-size: 13px; }
+    .task-cell { font-size: 12px; }
+    .kpi-value { font-size: 30px; }
+    .kpi-label { font-size: 11px; }
+  }
 </style>
 </head>
 <body>
-<div class="overlay" id="overlay">
-  <div class="spinner"></div>
-  <div class="spin-text">Loading shutdown data…</div>
+<div id="app">
+
+  <div id="loading">
+    <div class="load-logo">PalmCrest</div>
+    <div class="load-sub">LiveTrack</div>
+    <div class="load-bar"><div class="load-progress" id="loadBar"></div></div>
+    <div class="load-status" id="loadStatus">Loading data...</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="screen-dashboard" class="screen">
+    <div class="topbar"><span class="topbar-icon"></span><span class="topbar-brand" onclick="adminTap()">PalmCrest LiveTrack</span><span class="topbar-icon"></span></div>
+    <div class="scroll-area">
+      <div class="dash-header"><div class="dash-title" id="dashTitle">Shutdown Schedule</div><div class="dash-subtitle" id="dashSubtitle"></div></div>
+      <div class="kpi-grid">
+        <div class="kpi-cell"><div class="kpi-label">Shut Work Target</div><div class="kpi-value" id="kpiTarget">—</div></div>
+        <div class="kpi-cell"><div class="kpi-label">Actual Work</div><div class="kpi-value" id="kpiActual">—</div></div>
+        <div class="kpi-cell"><div class="kpi-label">Duration</div><div class="kpi-value" id="kpiDuration">—</div></div>
+        <div class="kpi-cell"><div class="kpi-label">Finish Variance</div><div class="kpi-value" id="kpiVariance">—</div></div>
+      </div>
+      <div class="notice-box"><div class="notice-label">General Notice</div><div class="notice-text" id="dashNotice">Loading...</div></div>
+      <button class="dash-btn emergency" onclick="showScreen('emergency')">⚠ Emergency Info &amp; Contacts</button>
+      <button class="dash-btn worklist" onclick="showScreen('workorders'); setNav('workorders')">Work Lists</button>
+      <div class="dash-links">
+        <div class="dash-link-btn" onclick="showScreen('documents'); setNav('documents')">Documents</div>
+        <div class="dash-link-btn" onclick="showScreen('areaprogress'); setNav('areaprogress')">Area Progress</div>
+      </div>
+    </div>
+    <div class="bottomnav">
+      <button class="nav-btn active" id="nav-dashboard" onclick="showScreen('dashboard'); setNav('dashboard')"><span class="nav-icon">⊞</span>Dashboard</button>
+      <button class="nav-btn" id="nav-workorders" onclick="showScreen('workorders'); setNav('workorders')"><span class="nav-icon">☑</span>Work Orders</button>
+      <button class="nav-btn" id="nav-documents" onclick="showScreen('documents'); setNav('documents')"><span class="nav-icon">📄</span>Documents</button>
+      <button class="nav-btn" id="nav-areaprogress" onclick="showScreen('areaprogress'); setNav('areaprogress')"><span class="nav-icon">📊</span>Area</button>
+    </div>
+  </div>
+
+  <!-- WORK ORDERS -->
+  <div id="screen-workorders" class="screen">
+    <div class="topbar"><button class="home-btn" onclick="showScreen('dashboard'); setNav('dashboard')">⊞ Home</button><span class="topbar-brand">Work Orders</span><span style="width:70px"></span></div>
+    <div class="search-bar">
+      <input class="search-input" placeholder="Search tasks, WO, FLOC..." id="searchInput" oninput="applyFilters()" />
+      <button class="filter-btn" id="filterToggleBtn" onclick="toggleFilterPanel()">Filter</button>
+    </div>
+    <div class="filter-panel" id="filterPanel">
+      <div class="filter-row">
+        <div><div class="filter-label">Team</div><select class="filter-select" id="filterTeam" onchange="applyFilters()"><option value="">All Teams</option></select></div>
+        <div><div class="filter-label">Sub Team</div><select class="filter-select" id="filterSubTeam" onchange="applyFilters()"><option value="">All Sub Teams</option></select></div>
+      </div>
+      <div class="filter-row">
+        <div><div class="filter-label">Group</div><select class="filter-select" id="filterGroup" onchange="applyFilters()"><option value="">All Groups</option></select></div>
+        <div><div class="filter-label">Resource</div><select class="filter-select" id="filterResource" onchange="applyFilters()"><option value="">All Resources</option></select></div>
+      </div>
+      <div class="filter-row">
+        <div><div class="filter-label">WO Status</div><select class="filter-select" id="filterStatus" onchange="applyFilters()"><option value="">All Statuses</option></select></div>
+        <div style="display:flex;align-items:flex-end;"><button class="filter-clear" onclick="clearFilters()">Clear All</button></div>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--complete)"></div>Complete</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--inprogress)"></div>In Progress</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--notstarted)"></div>Not Started</div>
+    </div>
+    <div class="col-header"><span class="col-h">Task Name</span><span class="col-h">WO#</span><span class="col-h">Task#</span><span class="col-h">Progress</span></div>
+    <div class="scroll-area" id="woList"><div class="no-results">Loading work orders...</div></div>
+    <div class="bottomnav">
+      <button class="nav-btn" onclick="showScreen('dashboard'); setNav('dashboard')"><span class="nav-icon">⊞</span>Dashboard</button>
+      <button class="nav-btn active"><span class="nav-icon">☑</span>Work Orders</button>
+      <button class="nav-btn" onclick="showScreen('documents'); setNav('documents')"><span class="nav-icon">📄</span>Documents</button>
+      <button class="nav-btn" onclick="showScreen('areaprogress'); setNav('areaprogress')"><span class="nav-icon">📊</span>Area</button>
+    </div>
+  </div>
+
+  <!-- TASK DETAIL -->
+  <div id="screen-taskdetail" class="screen">
+    <div class="topbar"><span class="topbar-back" onclick="showScreen('workorders')">◀ Work Orders</span><span style="flex:1"></span></div>
+    <div class="detail-content" id="taskDetailContent"></div>
+    <div class="bottomnav">
+      <button class="nav-btn" onclick="showScreen('dashboard'); setNav('dashboard')"><span class="nav-icon">⊞</span>Dashboard</button>
+      <button class="nav-btn active" onclick="showScreen('workorders')"><span class="nav-icon">☑</span>Work Orders</button>
+      <button class="nav-btn" onclick="showScreen('documents'); setNav('documents')"><span class="nav-icon">📄</span>Documents</button>
+      <button class="nav-btn" onclick="showScreen('areaprogress'); setNav('areaprogress')"><span class="nav-icon">📊</span>Area</button>
+    </div>
+  </div>
+
+  <!-- EDIT PROGRESS -->
+  <div id="screen-editprogress" class="screen">
+    <div class="topbar"><span class="topbar-back" onclick="showScreen('taskdetail')">◀ Back</span><span class="topbar-brand">Update Progress</span><span style="width:24px"></span></div>
+    <div class="edit-body">
+      <div class="edit-section-label">Task</div>
+      <div class="edit-task-title" id="editTaskTitle"></div>
+      <div class="edit-section-label">% Progress</div>
+      <div class="progress-control">
+        <button class="prog-btn" onclick="changeProgress(-5)">−</button>
+        <div class="prog-display"><div class="prog-number" id="progressDisplay">0</div><div class="prog-unit">%</div></div>
+        <button class="prog-btn" onclick="changeProgress(5)">+</button>
+      </div>
+      <input type="range" class="prog-slider" id="progressSlider" min="0" max="100" step="5" value="0" oninput="syncSlider()" />
+      <div class="notes-label">Notes</div>
+      <textarea class="notes-input" id="notesInput" placeholder="Enter any notes..."></textarea>
+      <button class="save-btn" id="saveBtn" onclick="saveProgress()">Save → Update Scheduler</button>
+    </div>
+  </div>
+
+  <!-- DOCUMENTS — emergency buttons removed -->
+  <div id="screen-documents" class="screen">
+    <div class="topbar"><button class="home-btn" onclick="showScreen('dashboard'); setNav('dashboard')">⊞ Home</button><span class="topbar-brand">Documents</span><span style="width:70px"></span></div>
+    <div class="scroll-area">
+      <div class="doc-section-label">General Docs</div>
+      <div class="doc-grid" id="docGrid"></div>
+    </div>
+    <div class="bottomnav">
+      <button class="nav-btn" onclick="showScreen('dashboard'); setNav('dashboard')"><span class="nav-icon">⊞</span>Dashboard</button>
+      <button class="nav-btn" onclick="showScreen('workorders'); setNav('workorders')"><span class="nav-icon">☑</span>Work Orders</button>
+      <button class="nav-btn active"><span class="nav-icon">📄</span>Documents</button>
+      <button class="nav-btn" onclick="showScreen('areaprogress'); setNav('areaprogress')"><span class="nav-icon">📊</span>Area</button>
+    </div>
+  </div>
+
+  <!-- AREA PROGRESS -->
+  <div id="screen-areaprogress" class="screen">
+    <div class="topbar"><button class="home-btn" onclick="showScreen('dashboard'); setNav('dashboard')">⊞ Home</button><span class="topbar-brand">Area Progress</span><span style="width:70px"></span></div>
+    <div class="scroll-area">
+      <div class="area-nav">
+        <div class="area-nav-label">Choose Area</div>
+        <div class="area-nav-row">
+          <button class="area-arrow-btn" onclick="changeArea(-1)">◀</button>
+          <div class="area-name-display" id="areaName">—</div>
+          <button class="area-arrow-btn" onclick="changeArea(1)">▶</button>
+        </div>
+      </div>
+      <div class="kpi-grid-3">
+        <div class="kpi-cell-sm"><div class="kpi-label-sm">Man Hours</div><div class="kpi-value-sm" id="ap-mh">—</div></div>
+        <div class="kpi-cell-sm"><div class="kpi-label-sm">Duration</div><div class="kpi-value-sm" id="ap-dur">—</div></div>
+        <div class="kpi-cell-sm"><div class="kpi-label-sm">Actual Work</div><div class="kpi-value-sm" id="ap-aw">—</div></div>
+        <div class="kpi-cell-sm"><div class="kpi-label-sm">% Complete</div><div class="kpi-value-sm" id="ap-pc">—</div></div>
+        <div class="kpi-cell-sm"><div class="kpi-label-sm">% Work Done</div><div class="kpi-value-sm" id="ap-pwc">—</div></div>
+        <div class="kpi-cell-sm"><div class="kpi-label-sm">Finish Var.</div><div class="kpi-value-sm" id="ap-fv">—</div></div>
+      </div>
+      <div class="kpi-wide"><div class="kpi-wide-label">Planned Start</div><div class="kpi-wide-value" id="ap-ps">—</div></div>
+      <div class="kpi-wide"><div class="kpi-wide-label">Forecast Finish</div><div class="kpi-wide-value" id="ap-ff">—</div></div>
+      <div class="kpi-wide"><div class="kpi-wide-label">Hours Left to Critical</div><div class="kpi-wide-value" id="ap-hlc">—</div></div>
+      <div class="chart-placeholder"><div class="chart-placeholder-label">Overall Progress Chart →</div></div>
+    </div>
+    <div class="bottomnav">
+      <button class="nav-btn" onclick="showScreen('dashboard'); setNav('dashboard')"><span class="nav-icon">⊞</span>Dashboard</button>
+      <button class="nav-btn" onclick="showScreen('workorders'); setNav('workorders')"><span class="nav-icon">☑</span>Work Orders</button>
+      <button class="nav-btn" onclick="showScreen('documents'); setNav('documents')"><span class="nav-icon">📄</span>Documents</button>
+      <button class="nav-btn active"><span class="nav-icon">📊</span>Area</button>
+    </div>
+  </div>
+
+  <!-- EMERGENCY PAGE -->
+  <div id="screen-emergency" class="screen">
+    <div class="topbar"><span class="topbar-back" onclick="showScreen('dashboard')">◀ Back</span><span class="topbar-brand">Emergency</span><span style="width:24px"></span></div>
+    <div class="emerg-body">
+      <!-- Triple-tap "Emergency Info" to open Emergency Admin -->
+      <div class="emerg-title" onclick="emergAdminTap()">Emergency Info</div>
+      <!-- Emergency Call button — dials configured number -->
+      <a id="emergCallBtn" href="tel:000" class="emerg-call-btn">
+        <span id="emergCallLabel">⚠ EMERGENCY CALL ⚠</span>
+        <span class="emerg-call-number" id="emergCallDisplay">000</span>
+      </a>
+      <!-- 3 configurable URL buttons -->
+      <div class="emerg-section-label">Emergency Resources</div>
+      <button class="emerg-item-btn" id="emergBtn1" onclick="openEmergDoc(0)">Emergency Contacts</button>
+      <button class="emerg-item-btn" id="emergBtn2" onclick="openEmergDoc(1)">First Aid Information</button>
+      <button class="emerg-item-btn" id="emergBtn3" onclick="openEmergDoc(2)">Emergency Response Plan</button>
+    </div>
+  </div>
+
+  <!-- DOCUMENTS ADMIN -->
+  <div id="screen-admin" class="screen">
+    <div class="topbar"><span class="topbar-back" onclick="showScreen('dashboard')">◀ Back</span><span class="topbar-brand">Admin</span><span style="width:60px"></span></div>
+    <div id="adminPinWrap" class="admin-pin-wrap">
+      <div class="admin-pin-title">Admin Access</div>
+      <div class="admin-pin-sub">Enter PIN to continue</div>
+      <div class="admin-pin-dots">
+        <div class="admin-pin-dot" id="pd0"></div><div class="admin-pin-dot" id="pd1"></div>
+        <div class="admin-pin-dot" id="pd2"></div><div class="admin-pin-dot" id="pd3"></div>
+      </div>
+      <div class="admin-pin-error" id="pinError"></div>
+      <div class="admin-pin-pad">
+        <button class="admin-pin-key" onclick="pinKey('1')">1</button>
+        <button class="admin-pin-key" onclick="pinKey('2')">2</button>
+        <button class="admin-pin-key" onclick="pinKey('3')">3</button>
+        <button class="admin-pin-key" onclick="pinKey('4')">4</button>
+        <button class="admin-pin-key" onclick="pinKey('5')">5</button>
+        <button class="admin-pin-key" onclick="pinKey('6')">6</button>
+        <button class="admin-pin-key" onclick="pinKey('7')">7</button>
+        <button class="admin-pin-key" onclick="pinKey('8')">8</button>
+        <button class="admin-pin-key" onclick="pinKey('9')">9</button>
+        <button class="admin-pin-key" onclick="pinKey('0')">0</button>
+        <button class="admin-pin-key del" onclick="pinDel()">⌫</button>
+      </div>
+    </div>
+    <div id="adminContent" style="display:none; flex:1; overflow-y:auto; padding:16px;">
+      <div class="admin-section-title">Document Buttons</div>
+      <div id="adminDocList"></div>
+      <button class="admin-save-btn" id="adminSaveBtn" onclick="saveAdminConfig()">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- EMERGENCY ADMIN — triple-tap "Emergency Info" to access -->
+  <div id="screen-emergadmin" class="screen">
+    <div class="topbar"><span class="topbar-back" onclick="showScreen('emergency')">◀ Emergency</span><span class="topbar-brand">Emergency Admin</span><span style="width:60px"></span></div>
+    <div id="emergAdminPinWrap" class="admin-pin-wrap">
+      <div class="admin-pin-title">Admin Access</div>
+      <div class="admin-pin-sub">Enter PIN to continue</div>
+      <div class="admin-pin-dots">
+        <div class="admin-pin-dot" id="epd0"></div><div class="admin-pin-dot" id="epd1"></div>
+        <div class="admin-pin-dot" id="epd2"></div><div class="admin-pin-dot" id="epd3"></div>
+      </div>
+      <div class="admin-pin-error" id="emergPinError"></div>
+      <div class="admin-pin-pad">
+        <button class="admin-pin-key" onclick="emergPinKey('1')">1</button>
+        <button class="admin-pin-key" onclick="emergPinKey('2')">2</button>
+        <button class="admin-pin-key" onclick="emergPinKey('3')">3</button>
+        <button class="admin-pin-key" onclick="emergPinKey('4')">4</button>
+        <button class="admin-pin-key" onclick="emergPinKey('5')">5</button>
+        <button class="admin-pin-key" onclick="emergPinKey('6')">6</button>
+        <button class="admin-pin-key" onclick="emergPinKey('7')">7</button>
+        <button class="admin-pin-key" onclick="emergPinKey('8')">8</button>
+        <button class="admin-pin-key" onclick="emergPinKey('9')">9</button>
+        <button class="admin-pin-key" onclick="emergPinKey('0')">0</button>
+        <button class="admin-pin-key del" onclick="emergPinDel()">⌫</button>
+      </div>
+    </div>
+    <div id="emergAdminContent" style="display:none; flex:1; overflow-y:auto; padding:16px;">
+      <div class="admin-section-title">Emergency Call Button</div>
+      <div class="admin-doc-row">
+        <div class="admin-input-label">Button Label</div>
+        <input class="admin-input" id="emergCallLabelInput" value="⚠ EMERGENCY CALL ⚠" placeholder="Button label" />
+        <div class="admin-input-label" style="margin-top:8px;">Phone Number (e.g. 0412345678)</div>
+        <input class="admin-input" id="emergCallPhone" value="000" placeholder="000" type="tel" />
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Tapping the button will dial this number directly.</div>
+      </div>
+      <div class="admin-section-title">Emergency URL Buttons (3)</div>
+      <div class="admin-doc-row">
+        <div class="admin-input-label">Button 1 — Label</div>
+        <input class="admin-input" id="emergBtnLabel0" value="Emergency Contacts" placeholder="Button label" />
+        <div class="admin-input-label" style="margin-top:8px;">URL</div>
+        <input class="admin-input" id="emergBtnUrl0" value="" placeholder="https://..." />
+        <div class="admin-doc-header" style="margin-top:8px;">
+          <span class="admin-doc-key">Show button</span>
+          <label class="admin-toggle"><input type="checkbox" id="emergBtnVis0" checked><span class="admin-toggle-slider"></span></label>
+        </div>
+      </div>
+      <div class="admin-doc-row">
+        <div class="admin-input-label">Button 2 — Label</div>
+        <input class="admin-input" id="emergBtnLabel1" value="First Aid Information" placeholder="Button label" />
+        <div class="admin-input-label" style="margin-top:8px;">URL</div>
+        <input class="admin-input" id="emergBtnUrl1" value="" placeholder="https://..." />
+        <div class="admin-doc-header" style="margin-top:8px;">
+          <span class="admin-doc-key">Show button</span>
+          <label class="admin-toggle"><input type="checkbox" id="emergBtnVis1" checked><span class="admin-toggle-slider"></span></label>
+        </div>
+      </div>
+      <div class="admin-doc-row">
+        <div class="admin-input-label">Button 3 — Label</div>
+        <input class="admin-input" id="emergBtnLabel2" value="Emergency Response Plan" placeholder="Button label" />
+        <div class="admin-input-label" style="margin-top:8px;">URL</div>
+        <input class="admin-input" id="emergBtnUrl2" value="" placeholder="https://..." />
+        <div class="admin-doc-header" style="margin-top:8px;">
+          <span class="admin-doc-key">Show button</span>
+          <label class="admin-toggle"><input type="checkbox" id="emergBtnVis2" checked><span class="admin-toggle-slider"></span></label>
+        </div>
+      </div>
+      <button class="admin-save-btn" id="emergAdminSaveBtn" onclick="saveEmergAdminConfig()">Save Changes</button>
+    </div>
+  </div>
+
+  <div id="toast"></div>
 </div>
-<header>
-  <span class="logo">Palm Crest</span>
-  <span class="hdr-name" id="hdrName">LiveTrack Shutdown Dashboard</span>
-  <span class="hdr-meta" id="hdrUpload"></span>
-  <span class="hdr-ago" id="hdrAgo"></span>
-  <button class="btn" onclick="loadAll()">↻ Refresh</button>
-</header>
-<nav>
-  <button class="active" onclick="switchTab('exec',this)">Executive Summary</button>
-  <button onclick="switchTab('critical',this)">Critical Works</button>
-  <button onclick="switchTab('vendor',this)">Vendor Updates</button>
-  <button onclick="switchTab('field',this)">Field Updates</button>
-  <button onclick="switchTab('outstanding',this)">Outstanding</button>
-</nav>
-<main>
-  <div class="err" id="errBanner"></div>
-  <!-- ══ EXECUTIVE SUMMARY ══ -->
-  <div id="tab-exec" class="tab-panel active">
-    <!-- Name + KPIs -->
-    <div class="name-kpi-band mb12" id="nameKpiBand">
-      <div class="shutdown-name-block" id="execShutdownName">SHUTDOWN NAME HERE</div>
-      <div class="kpi-band" id="execKpiBand"></div>
-    </div>
-    <!-- Maintenance Window -->
-    <div class="maint-band mb12">
-      <div class="maint-title">
-        <select id="maintAreaSelect" onchange="renderMaintWindow()" style="
-          background:transparent;border:none;color:var(--amber);
-          font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
-          cursor:pointer;outline:none;font-family:var(--font-u);width:280px;
-        "></select>
-      </div>
-      <div class="maint-fields" id="maintFields"></div>
-    </div>
-    <!-- Shutdown Areas Table -->
-    <div class="panel mb12">
-      <div class="panel-title">Shutdown Areas</div>
-      <div class="tbl-wrap"><table id="areaTable"></table></div>
-    </div>
-    <!-- Gantt -->
-    <div class="panel mb12">
-      <div class="panel-title">Shutdown Progress</div>
-      <div class="gantt-legend">
-        <span><i style="background:var(--muted)"></i> Start Offset</span>
-        <span><i style="background:var(--green)"></i> Complete</span>
-        <span><i style="background:rgba(75,142,245,.35)"></i> Remaining</span>
-      </div>
-      <div class="gantt-wrap" id="ganttChart"></div>
-    </div>
-    <!-- S-Curve -->
-    <div class="panel">
-      <div class="scurve-controls">
-        <div class="panel-title" style="margin:0">S-Curve</div>
-        <select id="scurveArea" onchange="renderScurve()"></select>
-      </div>
-      <div class="chart-legend">
-        <div class="chart-legend-item">
-          <div class="leg-line" style="background:var(--red)"></div><span>Planned</span>
-        </div>
-        <div class="chart-legend-item">
-          <div class="leg-line" style="background:#000;border-top:2px dashed #000;height:0"></div><span style="color:var(--bright)">Completed</span>
-        </div>
-        <div class="chart-legend-item">
-          <div class="leg-line" style="background:var(--blue);border-top:2px dashed var(--blue);height:0"></div><span>Forecast</span>
-        </div>
-        <div class="chart-legend-item">
-          <div class="leg-line" style="background:rgba(91,155,213,.55);height:10px;border-radius:2px"></div><span>Spent (hrs)</span>
-        </div>
-        <div class="chart-legend-item">
-          <div class="leg-line" style="background:rgba(180,180,180,.35);height:10px;border-radius:2px"></div><span>Remaining (hrs)</span>
-        </div>
-      </div>
-      <div style="position:relative;height:180px">
-        <canvas id="scurveCanvas"></canvas>
-      </div>
-    </div>
-  </div>
-  <!-- ══ CRITICAL WORKS ══ -->
-  <div id="tab-critical" class="tab-panel">
-    <div class="filter-row">
-      <input type="text" id="critSearch" placeholder="Search WO, header…" oninput="renderCritical()">
-      <select id="critTeam" onchange="renderCritical()"><option value="">All Teams</option></select>
-      <select id="critPct" onchange="renderCritical()">
-        <option value="">Any % Complete</option>
-        <option value="0">Not Started (0%)</option>
-        <option value="partial">In Progress</option>
-        <option value="100">Complete (100%)</option>
-      </select>
-      <select id="critCpct" onchange="renderCritical()">
-        <option value="">CP &amp; CT</option>
-        <option value="1">CP Only (Critical Path)</option>
-        <option value="2">CT Only (Critical Task)</option>
-      </select>
-    </div>
-    <div class="panel">
-      <div class="tbl-wrap"><table id="critTable"></table></div>
-    </div>
-  </div>
-  <!-- ══ VENDOR UPDATES ══ -->
-  <div id="tab-vendor" class="tab-panel">
-    <div class="panel mb12">
-      <div class="panel-title">Field Updates Target &amp; Actual — by Vendor</div>
-      <div class="chart-legend" style="margin-bottom:12px">
-        <div class="chart-legend-item">
-          <div class="leg-line" style="background:#4a9e5c;height:10px;border-radius:2px"></div>
-          <span>% Updated</span>
-        </div>
-        <div class="chart-legend-item">
-          <div class="leg-line" style="background:#aaa;height:10px;border-radius:2px"></div>
-          <span>Target %</span>
-        </div>
-        <div class="chart-legend-item">
-          <div class="leg-line" style="background:#5b9bd5;height:10px;border-radius:2px"></div>
-          <span>Completion Ratio</span>
-        </div>
-      </div>
-      <div style="position:relative;height:300px">
-        <canvas id="vendorCanvas"></canvas>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">Vendor Summary</div>
-      <div class="tbl-wrap"><table id="vendorTable"></table></div>
-    </div>
-  </div>
-  <!-- ══ FIELD UPDATES ══ -->
-  <div id="tab-field" class="tab-panel">
-    <div class="filter-row">
-      <input type="text" id="fieldSearch" placeholder="Search team, WO, notes…" oninput="renderField()">
-      <select id="fieldTeam" onchange="renderField()"><option value="">All Teams</option></select>
-      <select id="fieldStatus" onchange="renderField()">
-        <option value="">All Status</option>
-        <option value="Completed">Completed</option>
-        <option value="Not Complete">Not Complete</option>
-      </select>
-    </div>
-    <div class="panel">
-      <div class="tbl-wrap"><table id="fieldTable"></table></div>
-    </div>
-  </div>
-  <!-- ══ OUTSTANDING (NOT YET UPDATED) ══ -->
-  <div id="tab-outstanding" class="tab-panel">
-    <div class="filter-row">
-      <input type="text" id="outSearch" placeholder="Search team, WO…" oninput="renderOutstanding()">
-      <select id="outTeam" onchange="renderOutstanding()"><option value="">All Teams</option></select>
-      <select id="outDueFilter" onchange="renderOutstanding()">
-        <option value="">Overdue &amp; Not Due</option>
-        <option value="overdue">Overdue Only</option>
-        <option value="notdue">Not Due Only</option>
-      </select>
-    </div>
-    <div class="panel mb12">
-      <div class="panel-title">Tasks Not Yet Updated</div>
-      <div style="font-family:var(--font-d);font-size:13px;color:var(--amber)" id="outstandingCount"></div>
-      <div class="out-summary-band" id="outstandingSummary"></div>
-    </div>
-    <div class="panel">
-      <div class="tbl-wrap"><table id="outstandingTable"></table></div>
-    </div>
-  </div>
-</main>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
 <script>
-// ══════════════════════════════════════════════════════════════
-// CONFIG — paste your deployed GAS Web App URL here
-// ══════════════════════════════════════════════════════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbweAKtvZAcMDrXUPzCzqw4LLiOvvGxvnO9TENLbwAJLVY49cNUv4oMxz78tOgosQhrRxQ/exec';
-// ── STATE ─────────────────────────────────────────────────────
-let _exec = null, _gantt = null, _scurve = null, _field = null, _critical = null, _vendor = null;
-let _outDates = null;
-let _outDatesErr = null;
-let _fieldRowsFiltered = [];
-let _outstandingRowsFiltered = [];
-let _scurveChart = null;
-// ── TABS ──────────────────────────────────────────────────────
-function switchTab(id, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  btn.classList.add('active');
+// ── YOUR APPS SCRIPT URL — do not change this ──
+const EXEC_URL = 'https://script.google.com/macros/s/AKfycbweAKtvZAcMDrXUPzCzqw4LLiOvvGxvnO9TENLbwAJLVY49cNUv4oMxz78tOgosQhrRxQ/exec';
+
+// ── DOCUMENT BUTTONS (no emergency buttons) ──
+var DOCS = [
+  { key: 'schedule',   label: 'CPG3 Schedule',           style: 'green', url: '#' },
+  { key: 'org-chart',  label: 'Shutdown Org Chart',      style: 'dark',  url: '#' },
+  { key: 'phone-list', label: 'Phone List',              style: 'dark',  url: '#' },
+  { key: 'lightning',  label: 'Lightning Alerts',        style: 'dark',  url: '#' },
+  { key: 'weather',    label: 'Weather',                 style: 'dark',  url: '#' },
+  { key: 'crane',      label: 'Crane Interactions',      style: 'dark',  url: '#' },
+  { key: 'supervisor', label: 'Supervisor Areas',        style: 'dark',  url: '#' },
+  { key: 'radio',      label: 'Radio Channels',          style: 'dark',  url: '#' },
+  { key: 'traffic',    label: 'Traffic Management Plan', style: 'dark',  url: '#' },
+  { key: 'escalation', label: 'Escalation Matrix',       style: 'dark',  url: '#' },
+  { key: 'hse',        label: 'HSE Controls',            style: 'dark',  url: '#' },
+  { key: 'top-view',   label: 'CR3 Top View',            style: 'dark',  url: '#' },
+  { key: 'evac',       label: 'Evac Plans',              style: 'dark',  url: '#' },
+];
+
+// ── EMERGENCY CONFIG defaults ──
+var EMERG_CONFIG = {
+  callLabel: '⚠ EMERGENCY CALL ⚠',
+  callPhone: '000',
+  buttons: [
+    { label: 'Emergency Contacts',      url: '#', visible: true },
+    { label: 'First Aid Information',   url: '#', visible: true },
+    { label: 'Emergency Response Plan', url: '#', visible: true },
+  ]
+};
+
+// ── RENDER DOCUMENT GRID ──
+function renderDocGrid() {
+  var grid = document.getElementById('docGrid');
+  var html = '';
+  DOCS.forEach(function(doc) {
+    if (doc.hidden) return;
+    html += '<button class="doc-btn ' + doc.style + '" onclick="openDoc(\'' + doc.key + '\')">' + doc.label + '</button>';
+  });
+  grid.innerHTML = html;
 }
-// ── FETCH ─────────────────────────────────────────────────────
-async function gas(action, extra) {
-  const url = GAS_URL + '?action=' + action + (extra || '') + '&t=' + Date.now();
-  const r = await fetch(url);
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  const data = await r.json();
-  if (data.error) throw new Error(data.error);
-  return data;
-}
-function showErr(msg) {
-  const b = document.getElementById('errBanner');
-  b.textContent = msg;
-  b.style.display = 'block';
-}
-async function loadAll() {
-  document.getElementById('overlay').style.display = 'flex';
-  document.getElementById('errBanner').style.display = 'none';
-  try {
-    // outstandingdates is fetched separately and never allowed to throw —
-    // if it fails (e.g. new action not deployed yet, or a bad join), the
-    // rest of the dashboard must still load normally. Outstanding just
-    // falls back to showing no due-status badges.
-    const [meta, exec, gantt, scurve, field, critical, vendor] = await Promise.all([
-      gas('meta'), gas('exec'), gas('gantt'), gas('scurve'),
-      gas('fieldupdates'), gas('criticalworks'), gas('vendorupdates')
-    ]);
-    let outDates = null, outDatesErr = null;
-    try {
-      outDates = await gas('outstandingdates');
-    } catch(e2) {
-      outDatesErr = e2.message;
-    }
-    _exec = exec; _gantt = gantt; _scurve = scurve;
-    _field = field; _critical = critical; _vendor = vendor;
-    _outDates = outDates; _outDatesErr = outDatesErr;
-    applyMeta(meta);
-    renderExec();
-    renderGantt();
-    initScurve();
-    initCritical();
-    initVendor();
-    initField();
-    initOutstanding();
-  } catch(e) {
-    showErr('Error loading data: ' + e.message);
-  } finally {
-    document.getElementById('overlay').style.display = 'none';
-  }
-}
-// ── META ──────────────────────────────────────────────────────
-function applyMeta(m) {
-  if (m.shutdownName) {
-    document.getElementById('hdrName').textContent = m.shutdownName + ' — Dashboard';
-    document.getElementById('execShutdownName').textContent = m.shutdownName;
-    document.title = m.shutdownName;
-  }
-  if (m.lastUpload) {
-    document.getElementById('hdrUpload').textContent = 'Last upload: ' + m.lastUpload;
-  }
-  if (m.hoursAgo !== null && m.hoursAgo !== undefined) {
-    const el = document.getElementById('hdrAgo');
-    el.textContent = m.hoursAgo + ' Hrs Ago';
-    el.style.color = m.hoursAgo > 72 ? 'var(--red)' : m.hoursAgo > 24 ? 'var(--amber)' : 'var(--green)';
-  }
-}
-// ── HELPERS ───────────────────────────────────────────────────
-function pctCls(p) { return p >= 90 ? 'kv-green' : p >= 50 ? 'kv-amber' : 'kv-red'; }
-function fmtN(n, dp=2) {
-  if (n === null || n === undefined || isNaN(n)) return '—';
-  return (Math.round(n * Math.pow(10,dp)) / Math.pow(10,dp)).toFixed(dp);
-}
-function fmtN1(n) { return fmtN(n,1); }
-function fmtN0(n) { return fmtN(n,0); }
-function fvTag(fv) {
-  if (fv > 0) return `<span class="fv-pos">+${fmtN1(fv)}</span>`;
-  if (fv < 0) return `<span class="fv-neg">${fmtN1(fv)}</span>`;
-  return `<span class="fv-zero">0.0</span>`;
-}
-// Parse the "dd/MM/yy HH:mm" strings shutFmtDate() produces on the backend
-// back into a JS Date, so the Outstanding tab can compare against "now".
-function parseShutDate(str) {
-  if (!str) return null;
-  const parts = str.split(' ');
-  const dPart = parts[0], tPart = parts[1] || '00:00';
-  const dBits = dPart.split('/');
-  if (dBits.length !== 3) return null;
-  const [dd, mm, yy] = dBits;
-  const tBits = tPart.split(':');
-  const d = new Date(2000 + parseInt(yy,10), parseInt(mm,10) - 1, parseInt(dd,10), parseInt(tBits[0]||0,10), parseInt(tBits[1]||0,10));
-  return isNaN(d.getTime()) ? null : d;
-}
-// ── EXEC SUMMARY ─────────────────────────────────────────────
-function renderExec() {
-  const d = _exec;
-  if (!d || !d.kpis) return;
-  const { kpis, areas } = d;
-  // KPI band — always top-level rollup
-  const pc  = kpis.pctComplete || 0;
-  const ov  = kpis.forecastOverrun || 0;
-  const rw  = kpis.remainingWorkHours || 0;
-  document.getElementById('execKpiBand').innerHTML = `
-    <div class="kpi-cell">
-      <div class="kpi-cell-label">Percent Complete</div>
-      <div class="kpi-cell-value big ${pctCls(pc)}">${pc}%</div>
-    </div>
-    <div class="kpi-cell">
-      <div class="kpi-cell-label">Forecast Finish</div>
-      <div class="kpi-cell-value kv-white" style="font-size:16px">${kpis.forecastFinish || '—'}</div>
-    </div>
-    <div class="kpi-cell">
-      <div class="kpi-cell-label">Forecast Overrun</div>
-      <div class="kpi-cell-value ${ov > 0 ? 'kv-red' : ov < 0 ? 'kv-green' : 'kv-white'}">
-        ${ov > 0 ? '+' : ''}${fmtN1(ov)} Hrs
-      </div>
-    </div>
-    <div class="kpi-cell">
-      <div class="kpi-cell-label">Remaining Work Hours</div>
-      <div class="kpi-cell-value ${rw <= 0 ? 'kv-green' : 'kv-amber'}">
-        ${fmtN1(rw)} Hrs
-      </div>
-    </div>`;
-  // Populate area selector with all ES row names
-  const sel = document.getElementById('maintAreaSelect');
-  sel.innerHTML = (areas || []).map(a =>
-    `<option value="${a.name}">${a.name}</option>`
-  ).join('');
-  // Default to Maintenance Window row if present, else first
-  const mwOpt = (areas || []).find(a => /maintenance window/i.test(a.name));
-  if (mwOpt) sel.value = mwOpt.name;
-  renderMaintWindow();
-  // Area table
-  const cols = ['Area','% Comp','Duration','Completed Work','Total Work','Remaining Work','Start','Forecast Finish','Hrs to Critical','Finish Var'];
-  const tbody = (areas || []).map(a => {
-    const pc2 = a.pctComplete || 0;
-    const tagCls = pc2 >= 90 ? 'tag-green' : pc2 >= 50 ? 'tag-amber' : 'tag-red';
-    const htc = a.hoursToCritical || 0;
-    return `<tr>
-      <td>${a.name}</td>
-      <td><span class="tag ${tagCls}">${pc2}%</span></td>
-      <td>${fmtN1(a.duration)}</td>
-      <td>${fmtN(a.completedWork,2)}</td>
-      <td>${fmtN(a.totalWork,2)}</td>
-      <td>${fmtN(a.remainingWork,2)}</td>
-      <td>${a.start || '—'}</td>
-      <td>${a.forecastFinish || '—'}</td>
-      <td>${fmtN0(htc)}</td>
-      <td>${fvTag(a.finishVariance)}</td>
-    </tr>`;
-  }).join('');
-  document.getElementById('areaTable').innerHTML =
-    `<thead><tr>${cols.map(h => `<th>${h}</th>`).join('')}</tr></thead>
-     <tbody>${tbody || '<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">No data</td></tr>'}</tbody>`;
-}
-function renderMaintWindow() {
-  const d = _exec;
-  if (!d || !d.areas) return;
-  const selName = document.getElementById('maintAreaSelect').value;
-  const area = d.areas.find(a => a.name === selName) || d.areas[0];
-  if (!area) return;
-  const ov = area.finishVariance || 0;
-  document.getElementById('maintFields').innerHTML = `
-    <div class="maint-field">
-      <div class="maint-field-label">Start</div>
-      <div class="maint-field-value">${area.start || '—'}</div>
-    </div>
-    <div class="maint-field">
-      <div class="maint-field-label">Finish</div>
-      <div class="maint-field-value">${area.forecastFinish || '—'}</div>
-    </div>
-    <div class="maint-field">
-      <div class="maint-field-label">Work Hours</div>
-      <div class="maint-field-value">${fmtN0(area.totalWork)} Hrs</div>
-    </div>
-    <div class="maint-field">
-      <div class="maint-field-label">Completed</div>
-      <div class="maint-field-value">${fmtN0(area.completedWork)} Hrs</div>
-    </div>
-    <div class="maint-field">
-      <div class="maint-field-label">Overrun</div>
-      <div class="maint-field-value ${ov > 0 ? 'amber' : ov < 0 ? 'green' : ''}">
-        ${ov > 0 ? '+' : ''}${fmtN1(ov)} Hrs
-      </div>
-    </div>
-    <div class="maint-field">
-      <div class="maint-field-label">% Complete</div>
-      <div class="maint-field-value ${area.pctComplete >= 90 ? 'green' : area.pctComplete >= 50 ? 'amber' : 'red'}">
-        ${area.pctComplete || 0}%
-      </div>
-    </div>`;
-}
-// ── GANTT ─────────────────────────────────────────────────────
-function renderGantt() {
-  const d = _gantt;
-  if (!d || !d.areas || d.areas.length === 0) return;
-  const maxHrs = d.areas.reduce((m, a) =>
-    Math.max(m, a.startOffset + a.completed + a.remaining), 1);
-  document.getElementById('ganttChart').innerHTML = d.areas.map(a => {
-    const offPct  = (a.startOffset / maxHrs * 100).toFixed(2);
-    const donePct = (a.completed   / maxHrs * 100).toFixed(2);
-    const remPct  = (a.remaining   / maxHrs * 100).toFixed(2);
-    const restPct = Math.max(0, 100 - parseFloat(offPct) - parseFloat(donePct) - parseFloat(remPct)).toFixed(2);
-    return `<div class="gantt-row">
-      <div class="gantt-label" title="${a.name}">${a.name}</div>
-      <div class="gantt-track">
-        <div class="gantt-offset" style="flex:${offPct}"></div>
-        <div class="gantt-done"   style="flex:${donePct}"></div>
-        <div class="gantt-rem"    style="flex:${remPct}"></div>
-        <div style="flex:${restPct}"></div>
-      </div>
-      <div class="gantt-pct">${a.pctComplete}%</div>
-    </div>`;
-  }).join('');
-}
-// ── S-CURVE ───────────────────────────────────────────────────
-function initScurve() {
-  const d = _scurve;
-  if (!d || !d.areas) return;
-  const sel = document.getElementById('scurveArea');
-  sel.innerHTML = d.areas.map(a => `<option value="${a}">${a}</option>`).join('');
-  renderScurve();
-}
-function renderScurve() {
-  const d = _scurve;
-  if (!d || !d.series) return;
-  const area = document.getElementById('scurveArea').value;
-  const s = d.series[area];
-  if (!s) return;
-  const { labels, work, actual, baseline, spentBar, remainingBar, nowIndex } = s;
-  const maxWork = work[work.length - 1] || 1;
-  const idx = (typeof nowIndex === 'number' && nowIndex >= 0) ? nowIndex : actual.length - 1;
-  const completed = actual.map((v, i) => i <= idx ? v : null);
-  const noActualYet = actual.every(v => !v);
-  let forecast;
-  if (noActualYet) {
-    forecast = work.slice();
+
+function openDoc(key) {
+  var doc = DOCS.find(function(d) { return d.key === key; });
+  var url = doc ? doc.url : null;
+  if (url && url !== '#') {
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+    window.open(url, '_blank');
   } else {
-    const actualAtNow = actual[idx] || 0;
-    const workAtNow    = work[idx]   || 0;
-    const offset = actualAtNow - workAtNow;
-    forecast = actual.map((v, i) => i <= idx ? v : null);
-    for (let i = idx; i < labels.length; i++) {
-      forecast[i] = Math.max(0, Math.min(maxWork, work[i] + offset));
-    }
+    showToast('Document URL not configured yet', true);
   }
-  const spent  = spentBar    || labels.map(() => 0);
-  const remain = remainingBar || labels.map(() => 0);
-  const step = Math.ceil(labels.length / 18);
-  const sparseLabels = labels.map((l, i) => i % step === 0 ? l : '');
-  const ctx = document.getElementById('scurveCanvas').getContext('2d');
-  if (_scurveChart) _scurveChart.destroy();
-  _scurveChart = new Chart(ctx, {
-    data: {
-      labels: sparseLabels,
-      datasets: [
-        {
-          type: 'bar', label: 'Spent (hrs)', data: spent,
-          backgroundColor: 'rgba(91,155,213,.55)', borderColor: 'transparent',
-          yAxisID: 'yHrs', order: 5, stack: 'hrs',
-        },
-        {
-          type: 'bar', label: 'Remaining (hrs)', data: remain,
-          backgroundColor: 'rgba(180,180,180,.35)', borderColor: 'transparent',
-          yAxisID: 'yHrs', order: 4, stack: 'hrs',
-        },
-        {
-          type: 'line', label: 'Planned', data: work,
-          borderColor: '#e05555', backgroundColor: 'transparent',
-          borderWidth: 2, pointRadius: 0, tension: 0.4,
-          yAxisID: 'yPct', order: 1,
-        },
-        {
-          type: 'line', label: 'Completed', data: completed,
-          borderColor: '#000000', backgroundColor: 'transparent',
-          borderWidth: 3, borderDash: [6,3], pointRadius: 0, tension: 0.3,
-          spanGaps: false,
-          yAxisID: 'yPct', order: 2,
-        },
-        {
-          type: 'line', label: 'Forecast', data: forecast,
-          borderColor: '#4b8ef5', backgroundColor: 'transparent',
-          borderWidth: 2, borderDash: [4,4], pointRadius: 0, tension: 0.3,
-          spanGaps: false,
-          yAxisID: 'yPct', order: 3,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: '#1c2330', borderColor: '#2a3444', borderWidth: 1,
-          titleColor: '#b8c9e0', bodyColor: '#b8c9e0',
-          callbacks: {
-            label: ctx => {
-              const max = Math.max(...work.filter(Boolean));
-              if (ctx.dataset.yAxisID === 'yPct' && max > 0 && ctx.raw !== null) {
-                const pct = (ctx.raw / max * 100).toFixed(1);
-                return ` ${ctx.dataset.label}: ${ctx.raw} hrs (${pct}%)`;
-              }
-              return ` ${ctx.dataset.label}: ${ctx.raw} hrs`;
-            }
-          }
-        },
-      },
-      scales: {
-        x: {
-          ticks: { color: '#4d6080', font: { size: 10 }, maxRotation: 45 },
-          grid:  { color: 'rgba(42,52,68,.4)' },
-        },
-        yPct: {
-          type: 'linear', position: 'left', min: 0,
-          ticks: {
-            color: '#4d6080', font: { size: 11 },
-            callback: v => {
-              const max = Math.max(...work.filter(Boolean));
-              return max > 0 ? Math.round(v / max * 100) + '%' : v;
-            },
-          },
-          grid: { color: 'rgba(42,52,68,.4)' },
-        },
-        yHrs: {
-          type: 'linear', position: 'right', min: 0,
-          ticks: { color: '#4d6080', font: { size: 11 }, callback: v => v + ' Hrs' },
-          grid: { drawOnChartArea: false },
-        },
-      },
-    },
-  });
 }
-// ── VENDOR UPDATES ────────────────────────────────────────────
-let _vendorChart = null;
-function initVendor() {
-  const d = _vendor;
-  if (!d || !d.vendors) return;
-  renderVendorChart();
-  renderVendorTable();
-}
-function renderVendorChart() {
-  const d = _vendor;
-  if (!d || !d.vendors || d.vendors.length === 0) return;
-  const labels    = d.vendors.map(v => v.team);
-  const pctUpd    = d.vendors.map(v => v.pctUpdated);
-  const targetPct = d.vendors.map(v => v.targetPct);
-  const compRatio = d.vendors.map(v => v.completionRatio);
-  const ctx = document.getElementById('vendorCanvas').getContext('2d');
-  if (_vendorChart) _vendorChart.destroy();
-  _vendorChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: '% Updated',
-          data: pctUpd,
-          backgroundColor: '#4a9e5c',
-          borderRadius: 2,
-        },
-        {
-          label: 'Target %',
-          data: targetPct,
-          backgroundColor: 'rgba(180,180,180,.5)',
-          borderRadius: 2,
-        },
-        {
-          label: 'Completion Ratio',
-          data: compRatio,
-          backgroundColor: '#5b9bd5',
-          borderRadius: 2,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: '#1c2330', borderColor: '#2a3444', borderWidth: 1,
-          titleColor: '#b8c9e0', bodyColor: '#b8c9e0',
-          callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw}%` },
-        },
-      },
-      scales: {
-        x: {
-          ticks: { color: '#4d6080', font: { size: 10 }, maxRotation: 45 },
-          grid:  { color: 'rgba(42,52,68,.4)' },
-        },
-        y: {
-          min: 0, max: 100,
-          ticks: { color: '#4d6080', font: { size: 11 }, callback: v => v + '%' },
-          grid:  { color: 'rgba(42,52,68,.4)' },
-        },
-      },
-    },
-  });
-}
-function renderVendorTable() {
-  const d = _vendor;
-  if (!d || !d.vendors) return;
-  const cols = [
-    { label: 'Vendor',           align: 'left'   },
-    { label: 'Updated',          align: 'center' },
-    { label: 'Total',            align: 'center' },
-    { label: 'Target Updates',   align: 'center' },
-    { label: '% Updated',        align: 'center' },
-    { label: 'Target %',         align: 'center' },
-    { label: 'Completed Tasks',  align: 'center' },
-    { label: 'Completion Ratio', align: 'center' },
-  ];
-  const pctTag = (p, target=100) => {
-    const cls = p >= target ? 'tag-green' : p >= target * 0.5 ? 'tag-amber' : 'tag-red';
-    return `<span class="tag ${cls}">${p}%</span>`;
-  };
-  const tHead = cols.map(c => `<th style="text-align:${c.align}">${c.label}</th>`).join('');
-  const tBody = d.vendors.map(v => `<tr>
-    <td style="text-align:left;font-weight:500;color:var(--bright)">${v.team}</td>
-    <td style="text-align:center;font-family:var(--font-d)">${v.updated}</td>
-    <td style="text-align:center;font-family:var(--font-d)">${v.total}</td>
-    <td style="text-align:center;font-family:var(--font-d)">${v.targetUpdates}</td>
-    <td style="text-align:center">${pctTag(v.pctUpdated, v.targetPct)}</td>
-    <td style="text-align:center;font-family:var(--font-d);color:var(--muted)">${v.targetPct}%</td>
-    <td style="text-align:center;font-family:var(--font-d)">${v.completedTasks}</td>
-    <td style="text-align:center">${pctTag(v.completionRatio)}</td>
-  </tr>`).join('');
-  document.getElementById('vendorTable').innerHTML =
-    `<thead><tr>${tHead}</tr></thead>` +
-    `<tbody>${tBody || `<tr><td colspan="${cols.length}" style="text-align:center;color:var(--muted);padding:20px">No data</td></tr>`}</tbody>`;
-}
-// ── CRITICAL WORKS ────────────────────────────────────────────
-function initCritical() {
-  const d = _critical;
-  if (!d || !d.rows) return;
-  const sel = document.getElementById('critTeam');
-  sel.innerHTML = '<option value="">All Teams</option>' +
-    (d.teams || []).map(t => `<option value="${t}">${t}</option>`).join('');
-  renderCritical();
-}
-function renderCritical() {
-  const d = _critical;
-  if (!d || !d.rows) return;
-  const search  = (document.getElementById('critSearch').value || '').toLowerCase();
-  const team    = document.getElementById('critTeam').value;
-  const pctFil  = document.getElementById('critPct').value;
-  const cpctFil = document.getElementById('critCpct').value;
-  let rows = d.rows.filter(r => {
-    if (team    && r.team !== team)              return false;
-    if (cpctFil && r.cpct !== parseFloat(cpctFil)) return false;
-    if (pctFil === '0'       && r.pctComplete !== 0)                           return false;
-    if (pctFil === '100'     && r.pctComplete !== 100)                         return false;
-    if (pctFil === 'partial' && (r.pctComplete === 0 || r.pctComplete === 100)) return false;
-    if (search) {
-      const hay = [r.workOrder, r.wo, r.team, r.start, r.finish].join(' ').toLowerCase();
-      if (!hay.includes(search)) return false;
-    }
-    return true;
-  });
-  const cols = [
-    { label: 'CP',        align: 'center' },
-    { label: 'WO Number', align: 'center' },
-    { label: 'WO Header', align: 'left'   },
-    { label: 'PSD',       align: 'left'   },
-    { label: 'PFD',       align: 'left'   },
-    { label: '%',         align: 'center' },
-    { label: 'TS',        align: 'center' },
-  ];
-  const cpDot = cpct => {
-    if (cpct === 1) return '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--red);margin-right:5px;vertical-align:middle"></span>CP';
-    if (cpct === 2) return '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--amber);margin-right:5px;vertical-align:middle"></span>CT';
-    return '—';
-  };
-  const pctCls = p => p >= 100 ? 'tag-green' : p > 0 ? 'tag-amber' : 'tag-red';
-  const tHead = cols.map(c => `<th style="text-align:${c.align}">${c.label}</th>`).join('');
-  const tBody = rows.map(r => `<tr>
-    <td style="text-align:center">${cpDot(r.cpct)}</td>
-    <td style="text-align:center;font-family:var(--font-d)">${r.workOrder || '—'}</td>
-    <td style="text-align:left">${r.wo || '—'}</td>
-    <td style="text-align:left;font-family:var(--font-d)">${r.start || '—'}</td>
-    <td style="text-align:left;font-family:var(--font-d)">${r.finish || '—'}</td>
-    <td style="text-align:center"><span class="tag ${pctCls(r.pctComplete)}">${r.pctComplete}%</span></td>
-    <td style="text-align:center;font-family:var(--font-d)">${r.totalSlack}</td>
-  </tr>`).join('');
-  document.getElementById('critTable').innerHTML =
-    `<thead><tr>${tHead}</tr></thead>` +
-    `<tbody>${tBody || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">No critical works found</td></tr>`}</tbody>`;
-}
-// ── FIELD UPDATES ─────────────────────────────────────────────
-function initField() {
-  const d = _field;
-  if (!d || !d.rows) return;
-  const headers = d.headers;
-  const iApp = headers.indexOf('App');
-  // Only carry rows through where the App% column is > 0
-  _fieldRowsFiltered = d.rows.filter(r => {
-    const v = parseFloat(String(r[iApp]).replace('%', ''));
-    return !isNaN(v) && v > 0;
-  });
-  // Team is always first column (index 0)
-  const teams = [...new Set(_fieldRowsFiltered.map(r => r[0]).filter(Boolean))].sort();
-  const sel = document.getElementById('fieldTeam');
-  sel.innerHTML = '<option value="">All Teams</option>' +
-    teams.map(t => `<option value="${t}">${t}</option>`).join('');
-  renderField();
-}
-function renderField() {
-  const d = _field;
-  if (!d || !d.rows) return;
-  const search = (document.getElementById('fieldSearch').value || '').toLowerCase();
-  const team   = document.getElementById('fieldTeam').value;
-  const status = document.getElementById('fieldStatus').value;
-  const headers = d.headers; // colloquial labels from GAS
-  // Known column positions by label
-  const iTeam   = headers.indexOf('Team');
-  const iStatus = headers.indexOf('Upload Status');
-  const iNotes  = headers.indexOf('Field Notes');
-  const iProj   = headers.indexOf('Project');
-  const iApp    = headers.indexOf('App');
-  let rows = _fieldRowsFiltered.filter(r => {
-    if (team   && r[iTeam]   !== team)   return false;
-    if (status && iStatus >= 0 && r[iStatus] !== status) return false;
-    if (search && !r.join(' ').toLowerCase().includes(search)) return false;
-    return true;
-  });
-  const tHead = headers.map(h => `<th style="text-align:left">${h}</th>`).join('');
-  const tBody = rows.slice(0, 500).map(r => {
-    return '<tr>' + r.map((val, ci) => {
-      const isStatus = ci === iStatus;
-      const isNotes  = ci === iNotes;
-      const isPct    = ci === iProj || ci === iApp;
-      if (isStatus) {
-        const cls = val === 'Completed' ? 'badge-done' : 'badge-pend';
-        return `<td><span class="badge ${cls}">${val || '—'}</span></td>`;
-      }
-      if (isNotes && val) {
-        return `<td class="notes-cell">${val}</td>`;
-      }
-      if (isPct) {
-        return `<td style="text-align:left;font-family:var(--font-d)">${val || '—'}</td>`;
-      }
-      return `<td style="text-align:left">${val || '—'}</td>`;
-    }).join('') + '</tr>';
-  }).join('');
-  document.getElementById('fieldTable').innerHTML =
-    `<thead><tr>${tHead}</tr></thead>` +
-    `<tbody>${tBody || `<tr><td colspan="${headers.length}" style="text-align:center;color:var(--muted);padding:20px">No results</td></tr>`}</tbody>`;
-}
-// ── OUTSTANDING (NOT YET UPDATED) ──────────────────────────────
-// Mirror of Field Updates, but inverted: shows exactly the rows the
-// Field Updates tab silently drops (App% missing, blank, or 0).
-// This is the punch list for "what has nobody touched yet."
-//
-// Additive: each row is also joined (client-side) against the
-// outstandingdates lookup (Work Order + Task Number -> Planned Start)
-// to add an Overdue / Not Due badge and a count summary, without
-// changing any existing Field Updates logic or GAS action.
-function initOutstanding() {
-  const d = _field;
-  if (!d || !d.rows) return;
-  const headers = d.headers;
-  const iApp = headers.indexOf('App');
-  _outstandingRowsFiltered = d.rows.filter(r => {
-    const v = parseFloat(String(r[iApp]).replace('%', ''));
-    return isNaN(v) || v <= 0;
-  });
-  const teams = [...new Set(_outstandingRowsFiltered.map(r => r[0]).filter(Boolean))].sort();
-  const sel = document.getElementById('outTeam');
-  sel.innerHTML = '<option value="">All Teams</option>' +
-    teams.map(t => `<option value="${t}">${t}</option>`).join('');
-  renderOutstanding();
-}
-// Returns { planStartStr, dueState } for a row, where dueState is
-// 'overdue' | 'notdue' | 'unknown' (no matching Planned Start found).
-function outstandingDueInfo(row, iWO, iTask) {
-  const lookup = (_outDates && _outDates.lookup) || {};
-  const wo   = parseFloat(String(row[iWO]).trim());
-  const task = parseFloat(String(row[iTask]).trim());
-  if (isNaN(wo) || isNaN(task)) return { planStartStr: '', dueState: 'unknown' };
-  const key = wo + '|' + task;
-  const planStartStr = lookup[key] || '';
-  if (!planStartStr) return { planStartStr: '', dueState: 'unknown' };
-  const planDate = parseShutDate(planStartStr);
-  if (!planDate) return { planStartStr, dueState: 'unknown' };
-  const dueState = planDate <= new Date() ? 'overdue' : 'notdue';
-  return { planStartStr, dueState };
-}
-function renderOutstanding() {
-  const d = _field;
-  if (!d || !d.rows) return;
-  const search   = (document.getElementById('outSearch').value || '').toLowerCase();
-  const team     = document.getElementById('outTeam').value;
-  const dueFilter = document.getElementById('outDueFilter').value;
-  const headers  = d.headers;
-  const iTeam = headers.indexOf('Team');
-  const iWO   = headers.indexOf('Work Order');
-  const iTask = headers.indexOf('Task');
 
-  let rows = _outstandingRowsFiltered.filter(r => {
-    if (team   && r[iTeam] !== team) return false;
-    if (search && !r.join(' ').toLowerCase().includes(search)) return false;
-    return true;
-  });
-
-  // Attach due info once per row (used for both filtering and rendering)
-  const rowsWithDue = rows.map(r => ({ r, due: outstandingDueInfo(r, iWO, iTask) }));
-
-  const filteredByDue = rowsWithDue.filter(({ due }) => {
-    if (dueFilter === 'overdue') return due.dueState === 'overdue';
-    if (dueFilter === 'notdue')  return due.dueState === 'notdue';
-    return true;
-  });
-
-  // Count summary — computed from the team/search-filtered set (not the due filter),
-  // so the summary always shows the full breakdown regardless of which due filter is active.
-  let overdueCount = 0, notDueCount = 0, unknownCount = 0;
-  rowsWithDue.forEach(({ due }) => {
-    if (due.dueState === 'overdue') overdueCount++;
-    else if (due.dueState === 'notdue') notDueCount++;
-    else unknownCount++;
-  });
-
-  document.getElementById('outstandingCount').textContent =
-    rows.length + ' of ' + d.rows.length + ' total task rows have not been updated (App % = 0 or blank)';
-
-  if (_outDatesErr) {
-    document.getElementById('outstandingSummary').innerHTML =
-      `<div style="color:var(--muted);font-size:12px;padding:6px 0">
-        Overdue / Not Due split unavailable right now (${_outDatesErr}). Everything else on this dashboard is unaffected.
-      </div>`;
-    document.getElementById('outstandingTable').innerHTML =
-      `<thead><tr>${headers.map(h => `<th style="text-align:left">${h}</th>`).join('')}</tr></thead>` +
-      `<tbody>${rows.slice(0,500).map(r => '<tr>' + r.map(val => `<td style="text-align:left">${val || '—'}</td>`).join('') + '</tr>').join('') ||
-        `<tr><td colspan="${headers.length}" style="text-align:center;color:var(--muted);padding:20px">All tasks have been updated</td></tr>`}</tbody>`;
-    return;
+// ── RENDER EMERGENCY PAGE ──
+function renderEmergencyPage() {
+  var callBtn = document.getElementById('emergCallBtn');
+  var phone = EMERG_CONFIG.callPhone || '000';
+  callBtn.href = 'tel:' + phone.replace(/\s/g, '');
+  document.getElementById('emergCallLabel').textContent = EMERG_CONFIG.callLabel || '⚠ EMERGENCY CALL ⚠';
+  document.getElementById('emergCallDisplay').textContent = phone;
+  for (var i = 0; i < 3; i++) {
+    var btn = document.getElementById('emergBtn' + (i + 1));
+    var cfg = EMERG_CONFIG.buttons[i] || {};
+    btn.textContent = cfg.label || ('Button ' + (i + 1));
+    btn.style.display = (cfg.visible === false) ? 'none' : 'flex';
   }
-
-  document.getElementById('outstandingSummary').innerHTML = `
-    <div class="out-summary-cell">
-      <div class="out-summary-label">Overdue</div>
-      <div class="out-summary-value" style="color:var(--red)">${overdueCount}</div>
-    </div>
-    <div class="out-summary-cell">
-      <div class="out-summary-label">Not Due Yet</div>
-      <div class="out-summary-value" style="color:var(--blue)">${notDueCount}</div>
-    </div>
-    <div class="out-summary-cell">
-      <div class="out-summary-label">No Planned Date Found</div>
-      <div class="out-summary-value" style="color:var(--muted)">${unknownCount}</div>
-    </div>`;
-
-  const tHead = headers.map(h => `<th style="text-align:left">${h}</th>`).join('') +
-    '<th style="text-align:left">Planned Start</th><th style="text-align:center">Status</th>';
-
-  const tBody = filteredByDue.slice(0, 500).map(({ r, due }) => {
-    let statusBadge = '<span class="tag" style="color:var(--muted);background:rgba(77,96,128,.12)">Unknown</span>';
-    if (due.dueState === 'overdue') statusBadge = '<span class="tag tag-red">Overdue</span>';
-    else if (due.dueState === 'notdue') statusBadge = '<span class="tag tag-blue">Not Due</span>';
-    return '<tr>' +
-      r.map(val => `<td style="text-align:left">${val || '—'}</td>`).join('') +
-      `<td style="text-align:left;font-family:var(--font-d)">${due.planStartStr || '—'}</td>` +
-      `<td style="text-align:center">${statusBadge}</td>` +
-    '</tr>';
-  }).join('');
-
-  document.getElementById('outstandingTable').innerHTML =
-    `<thead><tr>${tHead}</tr></thead>` +
-    `<tbody>${tBody || `<tr><td colspan="${headers.length + 2}" style="text-align:center;color:var(--muted);padding:20px">All tasks have been updated</td></tr>`}</tbody>`;
 }
-// ── BOOT ──────────────────────────────────────────────────────
-loadAll();
+
+function openEmergDoc(idx) {
+  var cfg = EMERG_CONFIG.buttons[idx];
+  if (cfg && cfg.url && cfg.url !== '#') {
+    window.open(cfg.url, '_blank');
+  } else {
+    showToast('URL not configured yet', true);
+  }
+}
+
+// ── EMERGENCY ADMIN ──
+var emergAdminTapCount = 0, emergAdminTapTimer = null, emergPinEntry = '';
+
+function emergAdminTap() {
+  emergAdminTapCount++;
+  clearTimeout(emergAdminTapTimer);
+  emergAdminTapTimer = setTimeout(function() { emergAdminTapCount = 0; }, 800);
+  if (emergAdminTapCount >= 3) {
+    emergAdminTapCount = 0;
+    emergPinEntry = '';
+    updateEmergPinDots();
+    document.getElementById('emergPinError').textContent = '';
+    document.getElementById('emergAdminPinWrap').style.display = 'flex';
+    document.getElementById('emergAdminContent').style.display = 'none';
+    showScreen('emergadmin');
+  }
+}
+
+function emergPinKey(k) {
+  if (emergPinEntry.length >= 4) return;
+  emergPinEntry += k;
+  updateEmergPinDots();
+  if (emergPinEntry.length === 4) {
+    setTimeout(function() {
+      if (emergPinEntry === ADMIN_PIN) {
+        document.getElementById('emergAdminPinWrap').style.display = 'none';
+        document.getElementById('emergAdminContent').style.display = 'block';
+        loadEmergAdminForm();
+      } else {
+        document.getElementById('emergPinError').textContent = 'Incorrect PIN';
+        emergPinEntry = '';
+        updateEmergPinDots();
+      }
+    }, 200);
+  }
+}
+
+function emergPinDel() {
+  emergPinEntry = emergPinEntry.slice(0, -1);
+  updateEmergPinDots();
+  document.getElementById('emergPinError').textContent = '';
+}
+
+function updateEmergPinDots() {
+  for (var i = 0; i < 4; i++) {
+    document.getElementById('epd' + i).classList.toggle('filled', i < emergPinEntry.length);
+  }
+}
+
+function loadEmergAdminForm() {
+  document.getElementById('emergCallLabelInput').value = EMERG_CONFIG.callLabel || '⚠ EMERGENCY CALL ⚠';
+  document.getElementById('emergCallPhone').value = EMERG_CONFIG.callPhone || '000';
+  for (var i = 0; i < 3; i++) {
+    var cfg = EMERG_CONFIG.buttons[i] || {};
+    document.getElementById('emergBtnLabel' + i).value = cfg.label || '';
+    document.getElementById('emergBtnUrl' + i).value = (cfg.url && cfg.url !== '#') ? cfg.url : '';
+    document.getElementById('emergBtnVis' + i).checked = (cfg.visible !== false);
+  }
+}
+
+function saveEmergAdminConfig() {
+  var btn = document.getElementById('emergAdminSaveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  EMERG_CONFIG.callLabel = document.getElementById('emergCallLabelInput').value || '⚠ EMERGENCY CALL ⚠';
+  EMERG_CONFIG.callPhone = document.getElementById('emergCallPhone').value || '000';
+  for (var i = 0; i < 3; i++) {
+    EMERG_CONFIG.buttons[i] = {
+      label:   document.getElementById('emergBtnLabel' + i).value || ('Button ' + (i + 1)),
+      url:     document.getElementById('emergBtnUrl' + i).value || '#',
+      visible: document.getElementById('emergBtnVis' + i).checked
+    };
+  }
+  renderEmergencyPage();
+  fetch(EXEC_URL + '?action=saveEmergConfig&data=' + encodeURIComponent(JSON.stringify(EMERG_CONFIG)), { redirect: 'follow' })
+    .then(function() {
+      showToast('Emergency config saved');
+      btn.disabled = false;
+      btn.textContent = 'Save Changes';
+      showScreen('emergency');
+    })
+    .catch(function() {
+      showToast('Saved locally — server update failed', true);
+      btn.disabled = false;
+      btn.textContent = 'Save Changes';
+    });
+}
+
+// ── CORE DATA ──
+var allTasks = [], summaryData = [], currentArea = 0, selectedTask = null, currentProgress = 0;
+var expandedWOs = new Set(), editMode = 'task', selectedWONumber = null;
+
+function loadData() {
+  setLoad(20, 'Connecting...');
+  fetch(EXEC_URL + '?action=data', { redirect: 'follow' })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      setLoad(70, 'Building interface...');
+      applyNotes(data.notes);
+      applySummary(data.summary);
+      applyWOs(data.wos);
+      if (Array.isArray(data.config) && data.config.length > 0) {
+        DOCS.length = 0;
+        data.config.forEach(function(d) { DOCS.push(d); });
+      }
+      if (data.emergConfig && data.emergConfig.callPhone) {
+        EMERG_CONFIG = data.emergConfig;
+      }
+      renderDocGrid();
+      renderEmergencyPage();
+      setLoad(100, 'Ready');
+      setTimeout(function() { document.getElementById('loading').style.display = 'none'; showScreen('dashboard'); }, 300);
+    })
+    .catch(function(e) {
+      document.getElementById('loading').innerHTML =
+        '<div style="color:#ff6060;padding:30px;text-align:center;font-size:14px;line-height:1.8">Could not load data.<br><small style="color:#888">' + e.message + '</small><br><br>' +
+        '<button onclick="location.reload()" style="background:#1a6eb5;color:#fff;border:none;padding:10px 20px;border-radius:6px;font-size:14px;cursor:pointer;">Retry</button></div>';
+    });
+}
+
+function setLoad(pct, msg) { document.getElementById('loadBar').style.width = pct + '%'; document.getElementById('loadStatus').textContent = msg; }
+function applyNotes(data) { document.getElementById('dashNotice').textContent = (data && data.note) ? data.note : 'No notices at this time.'; }
+
+function applySummary(data) {
+  summaryData = Array.isArray(data) ? data : [];
+  if (summaryData.length > 0) {
+    var first = summaryData[0];
+    document.getElementById('kpiTarget').textContent = (first.shutTarget !== undefined && first.shutTarget !== '') ? fmt(Math.round(first.shutTarget * 100)) + '%' : '—';
+    document.getElementById('kpiActual').textContent = (first.actualWorkPct !== undefined && first.actualWorkPct !== '') ? fmt(Math.round(first.actualWorkPct * 100)) + '%' : '—';
+    document.getElementById('kpiDuration').textContent = fmt(first.kpiDuration);
+    document.getElementById('kpiVariance').textContent = fmt(first.kpiVariance);
+    document.getElementById('dashSubtitle').textContent = first.area || '';
+    renderAreaProgress();
+  }
+}
+
+function fmt(val) {
+  if (val === null || val === undefined || val === '') return '—';
+  if (typeof val === 'number') return Number.isInteger(val) ? val : parseFloat(val.toFixed(1));
+  return val;
+}
+
+function applyWOs(data) {
+  allTasks = (Array.isArray(data) ? data : []).map(function(r) {
+    return { row: r[0], name: r[1], woNumber: r[2], taskNumber: r[3], duration: r[4], pctComplete: r[5], start: r[6], finish: r[7], team: r[8], floc: r[9], resource: r[10], pctProgress: r[11], woHeader: r[12], subTeam: r[13], group: r[14], notes: r[15], woStatus: r[16] };
+  });
+  populateFilterOptions();
+  renderWOList();
+}
+
+function populateFilterOptions() { fillSelect('filterTeam', 'team', allTasks, 'All Teams'); updateCascadingFilters(); }
+
+function fillSelect(id, key, tasks, label) {
+  var sel = document.getElementById(id);
+  var current = sel.value;
+  var vals = [...new Set(tasks.map(function(t) { return t[key]; }).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">' + label + '</option>' + vals.map(function(v) { return '<option value="' + v + '"' + (v === current ? ' selected' : '') + '>' + v + '</option>'; }).join('');
+}
+
+function updateCascadingFilters() {
+  var team = document.getElementById('filterTeam').value;
+  var subTeam = document.getElementById('filterSubTeam').value;
+  var group = document.getElementById('filterGroup').value;
+  var afterTeam = allTasks.filter(function(t) { return !team || t.team === team; });
+  var afterSubTeam = afterTeam.filter(function(t) { return !subTeam || t.subTeam === subTeam; });
+  var afterGroup = afterSubTeam.filter(function(t) { return !group || t.group === group; });
+  fillSelect('filterSubTeam', 'subTeam', afterTeam, 'All Sub Teams');
+  fillSelect('filterGroup', 'group', afterSubTeam, 'All Groups');
+  fillSelect('filterResource', 'resource', afterGroup, 'All Resources');
+  fillSelect('filterStatus', 'woStatus', afterGroup, 'All Statuses');
+}
+
+function toggleFilterPanel() { document.getElementById('filterPanel').classList.toggle('open'); document.getElementById('filterToggleBtn').classList.toggle('active'); }
+
+function clearFilters() {
+  ['filterTeam','filterSubTeam','filterGroup','filterResource','filterStatus'].forEach(function(id) { document.getElementById(id).value = ''; });
+  document.getElementById('searchInput').value = '';
+  updateCascadingFilters(); applyFilters();
+}
+
+function applyFilters() { updateCascadingFilters(); renderWOList(); updateFilterBadge(); }
+
+function updateFilterBadge() {
+  var active = ['filterTeam','filterSubTeam','filterGroup','filterResource','filterStatus'].filter(function(id) { return document.getElementById(id).value; }).length;
+  var keyword = document.getElementById('searchInput').value;
+  var total = active + (keyword ? 1 : 0);
+  document.getElementById('filterToggleBtn').textContent = total > 0 ? 'Filter (' + total + ')' : 'Filter';
+}
+
+function getFilteredTasks() {
+  var keyword = (document.getElementById('searchInput').value || '').toLowerCase();
+  var team = document.getElementById('filterTeam').value;
+  var subTeam = document.getElementById('filterSubTeam').value;
+  var group = document.getElementById('filterGroup').value;
+  var resource = document.getElementById('filterResource').value;
+  var status = document.getElementById('filterStatus').value;
+  return allTasks.filter(function(t) {
+    if (team && t.team !== team) return false;
+    if (subTeam && t.subTeam !== subTeam) return false;
+    if (group && t.group !== group) return false;
+    if (resource && t.resource !== resource) return false;
+    if (status && t.woStatus !== status) return false;
+    if (keyword) { var s = [t.name, t.woNumber, t.floc, t.woHeader, t.resource, t.team].join(' ').toLowerCase(); if (!s.includes(keyword)) return false; }
+    return true;
+  });
+}
+
+function renderWOList() {
+  var list = document.getElementById('woList');
+  var filtered = getFilteredTasks();
+  if (filtered.length === 0) { list.innerHTML = '<div class="no-results">No tasks match your search or filters.</div>'; return; }
+  var groups = new Map();
+  filtered.forEach(function(task) {
+    var key = task.woNumber;
+    if (!groups.has(key)) groups.set(key, { header: task.woHeader || task.woNumber, tasks: [] });
+    groups.get(key).tasks.push(task);
+  });
+  groups.forEach(function(g) { g.tasks.sort(function(a, b) { return (a.taskNumber || 0) - (b.taskNumber || 0); }); });
+  var html = '';
+  groups.forEach(function(group, woNum) {
+    var isOpen = expandedWOs.has(woNum);
+    html += '<div class="wo-row" onclick="toggleWO(\'' + woNum + '\')">' +
+      '<span class="wo-arrow ' + (isOpen ? 'open' : '') + '">▶</span>' +
+      '<span class="wo-name">' + (group.header || woNum) + '</span>' +
+      '<span class="wo-count">' + group.tasks.length + ' task' + (group.tasks.length !== 1 ? 's' : '') + '</span></div>';
+    if (isOpen) {
+      html += '<div class="wo-update-bar"><span class="wo-update-bar-label">' + group.tasks.length + ' task' + (group.tasks.length !== 1 ? 's' : '') + ' in this WO</span>' +
+        '<button class="wo-update-all-btn" onclick="event.stopPropagation(); openUpdateWO(\'' + woNum + '\')">Update All Tasks</button></div>';
+      group.tasks.forEach(function(task) {
+        var pct = (task.pctProgress !== '' && task.pctProgress !== null) ? Number(task.pctProgress) : 0;
+        var cls = pct >= 100 ? 'complete' : pct > 0 ? 'inprogress' : 'notstarted';
+        html += '<div class="task-row ' + cls + '" onclick="selectTask(' + task.row + ')">' +
+          '<span class="task-name">' + (task.name || '') + '</span>' +
+          '<span class="task-cell">' + (task.woNumber || '') + '</span>' +
+          '<span class="task-cell">' + (task.taskNumber || '') + '</span>' +
+          '<span class="task-cell">' + pct + '%</span></div>';
+      });
+    }
+  });
+  list.innerHTML = html;
+}
+
+function toggleWO(woNum) { if (expandedWOs.has(woNum)) expandedWOs.delete(woNum); else expandedWOs.add(woNum); renderWOList(); }
+
+function selectTask(rowNum) {
+  selectedTask = allTasks.find(function(t) { return t.row === rowNum; });
+  if (!selectedTask) return;
+  renderTaskDetail(); showScreen('taskdetail');
+}
+
+function renderTaskDetail() {
+  var t = selectedTask;
+  var pct = (t.pctProgress !== '' && t.pctProgress !== null) ? Number(t.pctProgress) : 0;
+  document.getElementById('taskDetailContent').innerHTML =
+    '<div class="detail-wo-label">WO: ' + (t.woNumber || '') + '</div>' +
+    '<div class="detail-task-name">' + (t.name || '') + '</div>' +
+    '<div class="progress-bar-wrap"><div class="progress-bar-label"><span style="font-size:11px;color:var(--text-muted)">Progress</span><span style="font-size:13px;color:var(--text-primary);font-weight:500">' + pct + '%</span></div>' +
+    '<div class="progress-bar-bg"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div></div>' +
+    '<div class="detail-grid">' +
+    '<div class="detail-cell"><div class="detail-cell-label">Task Number</div><div class="detail-cell-value">' + (t.taskNumber || '—') + '</div></div>' +
+    '<div class="detail-cell"><div class="detail-cell-label">Duration</div><div class="detail-cell-value">' + (t.duration || '—') + ' hrs</div></div>' +
+    '<div class="detail-cell"><div class="detail-cell-label">Start</div><div class="detail-cell-value">' + formatDate(t.start) + '</div></div>' +
+    '<div class="detail-cell"><div class="detail-cell-label">Finish</div><div class="detail-cell-value">' + formatDate(t.finish) + '</div></div>' +
+    '<div class="detail-cell"><div class="detail-cell-label">Team</div><div class="detail-cell-value">' + (t.team || '—') + '</div></div>' +
+    '<div class="detail-cell"><div class="detail-cell-label">Resource</div><div class="detail-cell-value">' + (t.resource || '—') + '</div></div>' +
+    '<div class="detail-cell"><div class="detail-cell-label">Sub Team</div><div class="detail-cell-value">' + (t.subTeam || '—') + '</div></div>' +
+    '<div class="detail-cell"><div class="detail-cell-label">Group</div><div class="detail-cell-value">' + (t.group || '—') + '</div></div>' +
+    '<div class="detail-cell full"><div class="detail-cell-label">FLOC</div><div class="detail-cell-value">' + (t.floc || '—') + '</div></div>' +
+    '<div class="detail-cell"><div class="detail-cell-label">WO Status</div><div class="detail-cell-value">' + (t.woStatus || '—') + '</div></div>' +
+    '<div class="detail-cell"><div class="detail-cell-label">% MS Project</div><div class="detail-cell-value">' + (t.pctComplete || '0') + '%</div></div>' +
+    (t.notes ? '<div class="detail-cell full"><div class="detail-cell-label">Notes</div><div class="detail-cell-value">' + t.notes + '</div></div>' : '') +
+    '</div><button class="edit-task-btn" onclick="openEditScreen()">Update Progress</button>';
+}
+
+function formatDate(val) {
+  if (!val) return '—';
+  try { var d = new Date(val); if (isNaN(d)) return val; return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch(e) { return val; }
+}
+
+function openEditScreen() {
+  editMode = 'task'; selectedWONumber = null;
+  var t = selectedTask;
+  currentProgress = (t.pctProgress !== '' && t.pctProgress !== null) ? Number(t.pctProgress) : 0;
+  document.getElementById('editTaskTitle').textContent = t.name || '';
+  document.getElementById('progressDisplay').textContent = currentProgress;
+  document.getElementById('progressSlider').value = currentProgress;
+  document.getElementById('notesInput').value = t.notes || '';
+  document.getElementById('saveBtn').textContent = 'Save → Update Scheduler';
+  document.getElementById('saveBtn').disabled = false;
+  document.getElementById('saveBtn').classList.remove('saving');
+  showScreen('editprogress');
+}
+
+function openUpdateWO(woNum) {
+  editMode = 'wo'; selectedWONumber = woNum;
+  var tasks = allTasks.filter(function(t) { return t.woNumber === woNum; });
+  if (!tasks.length) return;
+  var avgPct = Math.round(tasks.reduce(function(sum, t) { return sum + ((t.pctProgress !== '' && t.pctProgress !== null) ? Number(t.pctProgress) : 0); }, 0) / tasks.length);
+  currentProgress = avgPct;
+  document.getElementById('editTaskTitle').textContent = (tasks[0].woHeader || woNum) + ' — All ' + tasks.length + ' Tasks';
+  document.getElementById('progressDisplay').textContent = currentProgress;
+  document.getElementById('progressSlider').value = currentProgress;
+  document.getElementById('notesInput').value = '';
+  document.getElementById('saveBtn').textContent = 'Save → Update Scheduler';
+  document.getElementById('saveBtn').disabled = false;
+  document.getElementById('saveBtn').classList.remove('saving');
+  showScreen('editprogress');
+}
+
+function changeProgress(delta) { currentProgress = Math.max(0, Math.min(100, currentProgress + delta)); document.getElementById('progressDisplay').textContent = currentProgress; document.getElementById('progressSlider').value = currentProgress; }
+function syncSlider() { currentProgress = parseInt(document.getElementById('progressSlider').value); document.getElementById('progressDisplay').textContent = currentProgress; }
+
+function saveProgress() {
+  if (editMode === 'wo') { saveWOProgress(); return; }
+  var btn = document.getElementById('saveBtn');
+  btn.textContent = 'Saving...'; btn.disabled = true; btn.classList.add('saving');
+  var notes = document.getElementById('notesInput').value;
+  fetch(EXEC_URL + '?action=updateTask&row=' + selectedTask.row + '&pctProgress=' + encodeURIComponent(currentProgress) + '&notes=' + encodeURIComponent(notes), { redirect: 'follow' })
+    .then(function() {
+      selectedTask.pctProgress = currentProgress; selectedTask.notes = notes;
+      showToast('Saved — Scheduler updated'); renderWOList(); showScreen('taskdetail'); renderTaskDetail();
+    })
+    .catch(function() {
+      showToast('Save failed — check connection', true);
+      btn.textContent = 'Save → Update Scheduler'; btn.disabled = false; btn.classList.remove('saving');
+    });
+}
+
+function saveWOProgress() {
+  var btn = document.getElementById('saveBtn');
+  btn.textContent = 'Saving...'; btn.disabled = true; btn.classList.add('saving');
+  var notes = document.getElementById('notesInput').value;
+  var tasks = allTasks.filter(function(t) { return t.woNumber === selectedWONumber; });
+  var cbName = 'woCallback_' + Date.now();
+  window[cbName] = function(result) {
+    delete window[cbName];
+    var s = document.getElementById(cbName); if (s) s.parentNode.removeChild(s);
+    clearTimeout(window[cbName + '_timeout']);
+    if (result && result.success) {
+      tasks.forEach(function(t) { t.pctProgress = currentProgress; if (notes) t.notes = notes; });
+      showToast('All ' + (result.rowCount || tasks.length) + ' tasks updated');
+      editMode = 'task'; selectedWONumber = null; renderWOList(); showScreen('workorders');
+    } else {
+      showToast('WO save failed — try again', true);
+      btn.textContent = 'Save → Update Scheduler'; btn.disabled = false; btn.classList.remove('saving');
+    }
+  };
+  window[cbName + '_timeout'] = setTimeout(function() {
+    if (window[cbName]) { delete window[cbName]; showToast('WO save timed out — try again', true); btn.textContent = 'Save → Update Scheduler'; btn.disabled = false; btn.classList.remove('saving'); }
+  }, 30000);
+  var script = document.createElement('script');
+  script.id = cbName;
+  script.src = EXEC_URL + '?action=updateWO&woNumber=' + encodeURIComponent(selectedWONumber) + '&pctProgress=' + encodeURIComponent(currentProgress) + '&notes=' + encodeURIComponent(notes) + '&callback=' + cbName;
+  document.body.appendChild(script);
+}
+
+function renderAreaProgress(a) {
+  if (!a) { if (summaryData.length === 0) return; a = summaryData[currentArea]; }
+  document.getElementById('areaName').textContent = a.area || '—';
+  document.getElementById('ap-mh').textContent = fmt(a.manHours);
+  document.getElementById('ap-dur').textContent = fmt(a.duration);
+  document.getElementById('ap-aw').textContent = fmt(a.actualWork);
+  document.getElementById('ap-pc').textContent = (a.pctComplete !== '' && a.pctComplete !== null && a.pctComplete !== undefined) ? Math.round(a.pctComplete * 100) + '%' : '—';
+  document.getElementById('ap-pwc').textContent = (a.pctWorkComplete !== '' && a.pctWorkComplete !== null && a.pctWorkComplete !== undefined) ? Math.round(a.pctWorkComplete * 100) + '%' : '—';
+  document.getElementById('ap-fv').textContent = fmt(a.finishVariance);
+  document.getElementById('ap-ps').textContent = formatDate(a.plannedStart);
+  document.getElementById('ap-ff').textContent = formatDate(a.forecastFinish);
+  document.getElementById('ap-hlc').textContent = fmt(a.hoursToCritical);
+}
+
+function changeArea(dir) {
+  if (summaryData.length === 0) return;
+  currentArea = (currentArea + dir + summaryData.length) % summaryData.length;
+  var areaName = summaryData[currentArea].area;
+  document.getElementById('areaName').textContent = areaName;
+  ['ap-mh','ap-dur','ap-aw','ap-pc','ap-pwc','ap-fv','ap-ps','ap-ff','ap-hlc'].forEach(function(id) { document.getElementById(id).textContent = '…'; });
+  fetch(EXEC_URL + '?action=setArea&area=' + encodeURIComponent(areaName), { redirect: 'follow' })
+    .then(function(r) { return r.json(); })
+    .then(function(data) { if (data && data.success) renderAreaProgress(data.area); else { showToast('Could not load area data', true); renderAreaProgress(); } })
+    .catch(function() { showToast('Could not load area data', true); renderAreaProgress(); });
+}
+
+function showScreen(id) { document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); }); document.getElementById('screen-' + id).classList.add('active'); }
+function setNav(active) { document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); }); var btn = document.getElementById('nav-' + active); if (btn) btn.classList.add('active'); }
+function showToast(msg, isError) { var t = document.getElementById('toast'); t.textContent = msg; t.className = isError ? 'error' : ''; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 3000); }
+
+// ── DOCUMENTS ADMIN ──
+var ADMIN_PIN = '1234';
+var pinEntry = '', adminTapCount = 0, adminTapTimer = null;
+
+function adminTap() {
+  adminTapCount++;
+  clearTimeout(adminTapTimer);
+  adminTapTimer = setTimeout(function() { adminTapCount = 0; }, 800);
+  if (adminTapCount >= 3) {
+    adminTapCount = 0; pinEntry = ''; updatePinDots();
+    document.getElementById('pinError').textContent = '';
+    document.getElementById('adminPinWrap').style.display = 'flex';
+    document.getElementById('adminContent').style.display = 'none';
+    showScreen('admin');
+  }
+}
+
+function pinKey(k) {
+  if (pinEntry.length >= 4) return;
+  pinEntry += k; updatePinDots();
+  if (pinEntry.length === 4) {
+    setTimeout(function() {
+      if (pinEntry === ADMIN_PIN) {
+        document.getElementById('adminPinWrap').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+        renderAdminDocs();
+      } else {
+        document.getElementById('pinError').textContent = 'Incorrect PIN';
+        pinEntry = ''; updatePinDots();
+      }
+    }, 200);
+  }
+}
+
+function pinDel() { pinEntry = pinEntry.slice(0, -1); updatePinDots(); document.getElementById('pinError').textContent = ''; }
+function updatePinDots() { for (var i = 0; i < 4; i++) { document.getElementById('pd' + i).classList.toggle('filled', i < pinEntry.length); } }
+
+function renderAdminDocs() {
+  var list = document.getElementById('adminDocList');
+  var html = '';
+  DOCS.forEach(function(doc, idx) {
+    var isHidden = doc.hidden || false;
+    var styleLabel = doc.style || 'dark';
+    html += '<div class="admin-doc-row' + (isHidden ? ' hidden-row' : '') + '" id="admin-row-' + idx + '">' +
+      '<div class="admin-doc-header"><span class="admin-doc-key">' + doc.key + '</span>' +
+      '<span class="admin-doc-style ' + styleLabel + '">' + styleLabel + '</span>' +
+      '<label class="admin-toggle"><input type="checkbox"' + (!isHidden ? ' checked' : '') + ' onchange="adminToggleHidden(' + idx + ', this.checked)"><span class="admin-toggle-slider"></span></label></div>' +
+      '<div class="admin-input-label">Button Label</div>' +
+      '<input class="admin-input" id="admin-label-' + idx + '" value="' + (doc.label || '') + '" placeholder="Button label" />' +
+      '<div class="admin-input-label" style="margin-top:8px;">URL</div>' +
+      '<input class="admin-input" id="admin-url-' + idx + '" value="' + (doc.url && doc.url !== '#' ? doc.url : '') + '" placeholder="https://..." />' +
+      '</div>';
+  });
+  list.innerHTML = html;
+}
+
+function adminToggleHidden(idx, isVisible) {
+  var row = document.getElementById('admin-row-' + idx);
+  if (isVisible) row.classList.remove('hidden-row'); else row.classList.add('hidden-row');
+}
+
+function saveAdminConfig() {
+  var btn = document.getElementById('adminSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  DOCS.forEach(function(doc, idx) {
+    var labelEl = document.getElementById('admin-label-' + idx);
+    var urlEl = document.getElementById('admin-url-' + idx);
+    var toggleEl = document.querySelector('#admin-row-' + idx + ' input[type=checkbox]');
+    if (labelEl) doc.label = labelEl.value;
+    if (urlEl) doc.url = urlEl.value || '#';
+    if (toggleEl) doc.hidden = !toggleEl.checked;
+  });
+  renderDocGrid();
+  var configData = DOCS.map(function(doc) { return [doc.key, doc.label, doc.style, doc.url || '#', doc.hidden ? 'true' : 'false', doc.action || ''].join('|'); }).join('\n');
+  fetch(EXEC_URL + '?action=saveConfig&data=' + encodeURIComponent(configData), { redirect: 'follow' })
+    .then(function() { showToast('Config saved'); btn.disabled = false; btn.textContent = 'Save Changes'; showScreen('documents'); setNav('documents'); })
+    .catch(function() { showToast('Saved locally — server update failed', true); btn.disabled = false; btn.textContent = 'Save Changes'; });
+}
+
+loadData();
 </script>
 </body>
 </html>
